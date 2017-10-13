@@ -26,7 +26,14 @@ public class MainActivity extends AppCompatActivity {
         downLoadTask.execute();
     }
 
-    class DownLoadTask extends AsyncTask<Object, Object, StringBuffer> {
+    @Override
+
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+    private class DownLoadTask extends AsyncTask<Object, Object, StringBuffer> {
 
         @Override
         protected void onPreExecute() {
