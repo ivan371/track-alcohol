@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">track-alcohol</string>
+    <string name="success_load">Данные загружены!</string>
 </resources>
