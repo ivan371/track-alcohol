@@ -44,26 +44,26 @@ public class MainActivity extends AppCompatActivity {
         protected StringBuffer doInBackground(Object... params) {
             URL url = null;
             HttpURLConnection connection = null;
-            StringBuffer chaine = new StringBuffer("");
+            StringBuffer downloaded_data = new StringBuffer("");
             try {
                 TimeUnit.SECONDS.sleep(1);
                 url = new URL("http://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
-                connection = (HttpURLConnection)url.openConnection();
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 InputStream is = new BufferedInputStream(connection.getInputStream());
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line = "";
                 while ((line = rd.readLine()) != null) {
-                    chaine.append(line);
+                    downloaded_data.append(line);
                 }
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null) {
+                if (connection != null) {
                     connection.disconnect();
                 }
             }
-            return chaine;
+            return downloaded_data;
         }
 
         @Override

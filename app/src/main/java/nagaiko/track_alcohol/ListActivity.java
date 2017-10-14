@@ -13,7 +13,7 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         Serializable result = getIntent().getStringExtra("result");
-        TextView textView= (TextView) findViewById(R.id.textView);
+        TextView textView = (TextView) findViewById(R.id.textView);
         textView.setText(result.toString());
     }
 }
