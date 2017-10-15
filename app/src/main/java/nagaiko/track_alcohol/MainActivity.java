@@ -1,12 +1,18 @@
 package nagaiko.track_alcohol;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
     private Download_data_fragment download_data_fragment;
     private static final String DOWNLOAD_TAG = "downloader";
+    public static boolean isLoaded = false;
+    public static boolean isPaused = false;
+    public static StringBuffer downloaded_data = new StringBuffer("");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +32,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        isPaused = false;
+        download_data_fragment.StartApp(downloaded_data);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-//        finish();
+        isPaused = true;
     }
 
 }

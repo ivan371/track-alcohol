@@ -75,16 +75,24 @@ public class Download_data_fragment extends Fragment {
         @Override
         protected void onPostExecute(StringBuffer result) {
             super.onPostExecute(result);
-            createList(result);
+            MainActivity.isLoaded = true;
+            MainActivity.downloaded_data = result;
+            StartApp(result);
+        }
+
+    }
+
+    public void StartApp(StringBuffer downloaded_data) {
+        if (MainActivity.isLoaded && !MainActivity.isPaused) {
+            createList(downloaded_data);
         }
     }
 
     public void createList(StringBuffer result) {
         Intent intent = new Intent(getActivity(), ListActivity.class);
         intent.putExtra("result", (Serializable) result);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         getActivity().finish();
     }
+
 }
