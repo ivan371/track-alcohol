@@ -82,7 +82,9 @@ public class Download_data_fragment extends Fragment {
     public void createList(StringBuffer result) {
         Intent intent = new Intent(getActivity(), ListActivity.class);
         intent.putExtra("result", (Serializable) result);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
+        getActivity().finish();
     }
 }
