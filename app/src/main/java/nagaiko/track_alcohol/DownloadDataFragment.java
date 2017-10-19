@@ -82,9 +82,9 @@ public class DownloadDataFragment extends Fragment {
 
     }
 
-    public void StartApp(StringBuffer downloaded_data) {
+    public void StartApp(StringBuffer downloadedData) {
         if (MainActivity.isLoaded && !MainActivity.isPaused) {
-            createList(downloaded_data);
+            createList(downloadedData);
         }
     }
 
