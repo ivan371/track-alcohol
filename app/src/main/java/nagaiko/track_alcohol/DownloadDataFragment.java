@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 
-public class Download_data_fragment extends Fragment {
+public class DownloadDataFragment extends Fragment {
 
     private DownLoadTask downloadTask;
 
@@ -50,7 +50,7 @@ public class Download_data_fragment extends Fragment {
         protected StringBuffer doInBackground(Object... params) {
             URL url = null;
             HttpURLConnection connection = null;
-            StringBuffer downloaded_data = new StringBuffer("");
+            StringBuffer downloadedData = new StringBuffer("");
             try {
                 TimeUnit.SECONDS.sleep(1);
                 url = new URL("http://www.thecocktaildb.com/api/json/v1/1/list.php?c=list");
@@ -60,7 +60,7 @@ public class Download_data_fragment extends Fragment {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line = "";
                 while ((line = rd.readLine()) != null) {
-                    downloaded_data.append(line);
+                    downloadedData.append(line);
                 }
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
@@ -69,14 +69,14 @@ public class Download_data_fragment extends Fragment {
                     connection.disconnect();
                 }
             }
-            return downloaded_data;
+            return downloadedData;
         }
 
         @Override
         protected void onPostExecute(StringBuffer result) {
             super.onPostExecute(result);
             MainActivity.isLoaded = true;
-            MainActivity.downloaded_data = result;
+            MainActivity.downloadedData = result;
             StartApp(result);
         }
 
