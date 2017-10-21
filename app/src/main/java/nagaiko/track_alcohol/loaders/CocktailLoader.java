@@ -52,7 +52,6 @@ public class CocktailLoader extends AsyncTaskLoader<Cocktail[]> {
     public static final int LIST_ALCOHOLIC_METHOD = 3;
 
 
-
     private HttpUrl httpUrl = null;
     private OkHttpClient httpClient = new OkHttpClient();
 
@@ -70,7 +69,7 @@ public class CocktailLoader extends AsyncTaskLoader<Cocktail[]> {
             if (httpUrl == null) {
                 throw new InvalidParameterException("You must set api method");
             }
-            CocktailLoader cocktailLoader =  new CocktailLoader(context);
+            CocktailLoader cocktailLoader = new CocktailLoader(context);
             cocktailLoader.httpUrl = httpUrl.build();
             return cocktailLoader;
         }
@@ -117,13 +116,21 @@ public class CocktailLoader extends AsyncTaskLoader<Cocktail[]> {
         }
 
         public Builder setFilterMethod(String ingredientName, String alcoholic,
-                                    String category, String glass) {
+                                       String category, String glass) {
             httpUrl = getNewUrlBuilder()
-                    .addPathSegment(FILTER_METHOD)
-                    .addQueryParameter("i", ingredientName)
-                    .addQueryParameter("a", alcoholic)
-                    .addQueryParameter("c", category)
-                    .addQueryParameter("g", glass);
+                    .addPathSegment(FILTER_METHOD);
+            if (ingredientName != null) {
+                httpUrl.addQueryParameter("i", ingredientName);
+            }
+            if (alcoholic != null) {
+                httpUrl.addQueryParameter("a", alcoholic);
+            }
+            if (category != null) {
+                httpUrl.addQueryParameter("c", category);
+            }
+            if (glass != null) {
+                httpUrl.addQueryParameter("g", glass);
+            }
             return this;
         }
 
@@ -194,7 +201,7 @@ public class CocktailLoader extends AsyncTaskLoader<Cocktail[]> {
     @Override
     protected void onStartLoading() {
 //        if (takeContentChanged()) {
-            forceLoad();
+        forceLoad();
 //        }
     }
 
