@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.CocktailsInCategoryDowloadFragment;
 import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 /**
@@ -25,6 +25,7 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
 
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private boolean isFinish = false;
+    private boolean isOnline = false;
     private DataStorage dataStorage = DataStorage.getInstance();
     ApiDataDownloadService.ApiServiceProxy proxy = null;
 
@@ -40,25 +41,40 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
         bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
-    @Override
-    public void onPostExecute(Object[] o) {
-        Log.d(LOG_TAG, "onPostExecute");
-
-        dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType)o[0]).drinks);
-        isFinish = true;
-//        Intent intent = new Intent(this, ListActivity.class);
-//        startActivity(intent);
-//        finish();
-    }
-
-    @Override
-    protected void onResume() {
-        if (isFinish) {
+    private void goToNextActivity() {
+        if (isOnline) {
             Intent intent = new Intent(this, ListActivity.class);
             startActivity(intent);
             finish();
         }
+        isFinish = true;
+    }
+
+    @Override
+    public void onPostExecute(Object[] o) {
+        Log.d(LOG_TAG, "onPostExecute");
+        if (o == null || o[0] == null) {
+            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
+            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
+        } else {
+            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType) o[0]).drinks);
+        }
+        goToNextActivity();
+    }
+
+    @Override
+    protected void onResume() {
+        isOnline = true;
+        if (isFinish) {
+            goToNextActivity();
+        }
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isOnline = false;
     }
 
     @Override
@@ -93,7 +109,7 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
 
     @Override
     protected void onDestroy() {
-        unbindService(this);
         super.onDestroy();
+        unbindService(this);
     }
 }

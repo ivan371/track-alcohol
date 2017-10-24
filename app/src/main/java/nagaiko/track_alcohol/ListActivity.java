@@ -44,7 +44,7 @@ public class ListActivity extends AppCompatActivity implements
 
         Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
 
-        String[] names = new String[data.length];
+        names = new String[data.length];
         for (int i = 0; i < data.length; i++){
             names[i] = data[i].name;
         }
