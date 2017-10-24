@@ -9,13 +9,13 @@ import nagaiko.track_alcohol.loaders.CocktailLoader;
  * Created by altair on 21.10.17.
  */
 
-public class CateroiesListDownloadFragment extends BaseApiFragment {
+public class CategoriesListDownloadFragment extends BaseApiFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getLoaderManager().initLoader(CateroiesListDownloadFragment.class.hashCode(), null, this);
+        getLoaderManager().initLoader(CategoriesListDownloadFragment.class.hashCode(), null, this);
     }
 
     public CocktailLoader getLoader(Context context) {
