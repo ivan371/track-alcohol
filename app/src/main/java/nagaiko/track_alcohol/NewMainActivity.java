@@ -25,6 +25,7 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
 
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private boolean isFinish = false;
+    private boolean isOnline = false;
     private DataStorage dataStorage = DataStorage.getInstance();
     ApiDataDownloadService.ApiServiceProxy proxy = null;
 
@@ -40,25 +41,36 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
         bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
+    private void goToNextActivity() {
+        if (isOnline) {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        isFinish = true;
+    }
+
     @Override
     public void onPostExecute(Object[] o) {
         Log.d(LOG_TAG, "onPostExecute");
 
         dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType)o[0]).drinks);
-        isFinish = true;
-//        Intent intent = new Intent(this, ListActivity.class);
-//        startActivity(intent);
-//        finish();
+        goToNextActivity();
     }
 
     @Override
     protected void onResume() {
+        isOnline = true;
         if (isFinish) {
-            Intent intent = new Intent(this, ListActivity.class);
-            startActivity(intent);
-            finish();
+            goToNextActivity();
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isOnline = false;
     }
 
     @Override
@@ -93,7 +105,7 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
 
     @Override
     protected void onDestroy() {
-        unbindService(this);
         super.onDestroy();
+        unbindService(this);
     }
 }
