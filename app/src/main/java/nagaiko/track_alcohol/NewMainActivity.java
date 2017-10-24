@@ -1,20 +1,26 @@
 package nagaiko.track_alcohol;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import nagaiko.track_alcohol.fragments.CategoriesListDownloadFragment;
+import nagaiko.track_alcohol.api.ICallbackOnTask;
+import nagaiko.track_alcohol.api.Request;
 import nagaiko.track_alcohol.fragments.CocktailsInCategoryDowloadFragment;
-import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 /**
  * Created by Konstantin on 23.10.2017.
  */
 
-public class NewMainActivity extends AppCompatActivity implements CategoriesListDownloadFragment.OnFragmentDataLoadedListener {
+public class NewMainActivity extends AppCompatActivity implements ICallbackOnTask, ServiceConnection {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private static final String DOWNLOAD_TAG = "downloader";
@@ -22,28 +28,14 @@ public class NewMainActivity extends AppCompatActivity implements CategoriesList
     CocktailsInCategoryDowloadFragment categoriesFragment;
 
     private boolean isFinish = false;
+    private DataStorage dataStorage = DataStorage.getInstance();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        categoriesFragment = (CocktailsInCategoryDowloadFragment) getSupportFragmentManager()
-                .findFragmentByTag(DOWNLOAD_TAG);
-        if (categoriesFragment == null) {
-            categoriesFragment = new CocktailsInCategoryDowloadFragment();
-
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_activity, categoriesFragment, DOWNLOAD_TAG)
-                    .commit();
-        }
-
-    }
-
-    @Override
-    public Loader<Cocktail[]> onCreateLoader(int id, Bundle args) {
-        Log.d(LOG_TAG, "onCreateLoader");
-        return categoriesFragment.getLoader(this, "Ordinary_Drink");
+        Intent intent = new Intent(this, ApiDataDownloadService.class);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
     /*
@@ -56,36 +48,34 @@ public class NewMainActivity extends AppCompatActivity implements CategoriesList
         сделал(хотя по мне это жуткий костыль). Второе, я не понял, как этот Loader заканчивается => как заканчивается первое Activity. Поэтому
         напиши мне как это работает, либо исправь мой код.
      */
-
     @Override
-    public void onLoadFinished(Loader<Cocktail[]> loader, Cocktail[] data) {
+    public void onPostExecute(Object[] o) {
         Log.d(LOG_TAG, "onLoadFinished");
 
-        String[] names = new String[data.length];
-        for (int i = 0; i < data.length; i++){
-            names[i] = data[i].name;
-        }
-        Log.d(LOG_TAG, Integer.toString(names.length));
+        dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType)o[0]).drinks);
         Intent intent = new Intent(this, ListActivity.class);
-        intent.putExtra("names", names);
-        isFinish = true;
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        ApiDataDownloadService.ApiServiceProxy proxy = (ApiDataDownloadService.ApiServiceProxy) iBinder;
+        String categoryName = "Ordinary_Drink";
+
+        Request request = (Request) proxy.getRequestBulder().setFilterMethod(null, null, categoryName, null)
+                .build();
+        proxy.sendApiRequest(this, request);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
 
     }
 
     @Override
-    public void onLoaderReset(Loader<Cocktail[]> loader) {
-        Log.d(LOG_TAG, "onLoaderReset");
-        if (!isFinish){
-            String[] names = null;
-            Intent intent = new Intent(this, ListActivity.class);
-            intent.putExtra("names", names);
-            startActivity(intent);
-            finish();
-        }
-
-
+    protected void onStop() {
+        super.onStop();
+        unbindService(this);
     }
-
 }
