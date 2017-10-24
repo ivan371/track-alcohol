@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.CocktailsInCategoryDowloadFragment;
 import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 /**
@@ -53,8 +53,12 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
     @Override
     public void onPostExecute(Object[] o) {
         Log.d(LOG_TAG, "onPostExecute");
-
-        dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType)o[0]).drinks);
+        if (o == null || o[0] == null) {
+            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
+            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
+        } else {
+            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType) o[0]).drinks);
+        }
         goToNextActivity();
     }
 

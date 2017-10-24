@@ -21,7 +21,7 @@ public class ApiAsyncTask extends AsyncTask<Request, Integer, Object[]> {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
-    private OkHttpClient httpClient = new OkHttpClient();
+    private OkHttpClient httpClient = null;
     private ICallbackOnTask callbackOnTask;
 
     public ApiAsyncTask(ICallbackOnTask callbackOnTask) {
@@ -59,9 +59,8 @@ public class ApiAsyncTask extends AsyncTask<Request, Integer, Object[]> {
                     result[i] = null;
                 }
             } catch (IOException | NullPointerException e) {
-                OperationCanceledException e2 = new OperationCanceledException();
-                e2.addSuppressed(e);
-                throw e2;
+                Log.e(LOG_TAG, e.toString());
+                result[i] = null;
             }
         }
         return result;
