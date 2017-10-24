@@ -27,6 +27,7 @@ public class ApiAsyncTask extends AsyncTask<Request, Integer, Object[]> {
     public ApiAsyncTask(ICallbackOnTask callbackOnTask) {
         super();
         this.callbackOnTask = callbackOnTask;
+        httpClient = new OkHttpClient();
     }
 
     @Override
