@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -25,42 +23,60 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
     public final String LOG_TAG = this.getClass().getSimpleName();
     private static final String DOWNLOAD_TAG = "downloader";
 
-    CocktailsInCategoryDowloadFragment categoriesFragment;
-
+    private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private boolean isFinish = false;
     private DataStorage dataStorage = DataStorage.getInstance();
+    ApiDataDownloadService.ApiServiceProxy proxy = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
+        }
+
         Intent intent = new Intent(this, ApiDataDownloadService.class);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
     }
 
-    /*
-        В этом методе два костыля:
-        1) По хорошему в следующее activity нужно прокинуть массив из Cocktail. Для этого этот класс надо отналедовать от интерфейса Parseble
-        (https://developer.android.com/reference/android/os/Parcelable.html). Я пока с ним не разбирался, постараюсь к 9 вечера завтра
-        разобраться. Ну либо придумаем второй вариант. Пока я прокидываю в следующее activity массив с названиями(массив String)
-        2) Я походу не совсем разобрался в Loader, но походу метод onLoaderReset вызывается в не зависимости от успешности закачки. Если так,
-        то у нас 2 проблему. Первая, этот метод полностью вычищает закачанные данные, то есть их надо сохранять отдельно, что я собственно и
-        сделал(хотя по мне это жуткий костыль). Второе, я не понял, как этот Loader заканчивается => как заканчивается первое Activity. Поэтому
-        напиши мне как это работает, либо исправь мой код.
-     */
     @Override
     public void onPostExecute(Object[] o) {
-        Log.d(LOG_TAG, "onLoadFinished");
+        Log.d(LOG_TAG, "onPostExecute");
 
         dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType)o[0]).drinks);
-        Intent intent = new Intent(this, ListActivity.class);
-        startActivity(intent);
-        finish();
+        isFinish = true;
+//        Intent intent = new Intent(this, ListActivity.class);
+//        startActivity(intent);
+//        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        if (isFinish) {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_FINISH_BUNDLE_KEY, isFinish);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
     }
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        ApiDataDownloadService.ApiServiceProxy proxy = (ApiDataDownloadService.ApiServiceProxy) iBinder;
+        proxy = (ApiDataDownloadService.ApiServiceProxy) iBinder;
+        proxy.subscribeOnLoad(this);
         String categoryName = "Ordinary_Drink";
 
         Request request = (Request) proxy.getRequestBulder().setFilterMethod(null, null, categoryName, null)
@@ -70,12 +86,14 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-
+        if (proxy != null) {
+            proxy.unsubscribeOnLoad(this);
+        }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
         unbindService(this);
+        super.onDestroy();
     }
 }

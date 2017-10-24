@@ -8,4 +8,6 @@ import nagaiko.track_alcohol.services.IRequestBuilder;
 
 public interface IProxyInterface {
     IRequestBuilder getRequestBulder();
+    void subscribeOnLoad(ICallbackOnTask subscriber);
+    void unsubscribeOnLoad(ICallbackOnTask subscriber);
 }
