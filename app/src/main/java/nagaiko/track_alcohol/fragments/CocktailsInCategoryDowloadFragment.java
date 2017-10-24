@@ -15,7 +15,7 @@ public class CocktailsInCategoryDowloadFragment extends BaseApiFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getLoaderManager().initLoader(CateroiesListDownloadFragment.class.hashCode(), null, this);
+        getLoaderManager().initLoader(CategoriesListDownloadFragment.class.hashCode(), null, this);
     }
 
     public CocktailLoader getLoader(Context context, String categoryName) {
