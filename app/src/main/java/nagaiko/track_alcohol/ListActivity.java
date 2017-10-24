@@ -12,6 +12,8 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import nagaiko.track_alcohol.models.Cocktail;
+
 public class ListActivity extends AppCompatActivity implements
         ClickRecyclerAdapter.OnItemClickListener{
 
@@ -19,6 +21,7 @@ public class ListActivity extends AppCompatActivity implements
     private TextView textView;
 
     private static String[] names;
+    private DataStorage dataStorage = DataStorage.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +31,14 @@ public class ListActivity extends AppCompatActivity implements
 
         mRecyclerView = new RecyclerView(this);
 
-        names = Arrays.copyOf(intent.getStringArrayExtra("names"), intent.getStringArrayExtra("names").length);
+        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
 
-        mRecyclerView.setAdapter(new ClickRecyclerAdapter(getLayoutInflater(),names, this));
+        String[] names = new String[data.length];
+        for (int i = 0; i < data.length; i++){
+            names[i] = data[i].name;
+        }
+
+        mRecyclerView.setAdapter(new ClickRecyclerAdapter(getLayoutInflater(), names, this));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mRecyclerView.setHasFixedSize(true);
