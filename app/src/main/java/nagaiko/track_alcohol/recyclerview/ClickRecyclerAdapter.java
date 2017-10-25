@@ -1,4 +1,4 @@
-package nagaiko.track_alcohol;
+package nagaiko.track_alcohol.recyclerview;
 
 import android.view.LayoutInflater;
 import android.view.View;
