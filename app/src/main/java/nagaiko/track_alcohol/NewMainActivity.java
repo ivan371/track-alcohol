@@ -55,7 +55,7 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
         Log.d(LOG_TAG, "onPostExecute");
         if (o == null || o[0] == null) {
 //            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
-            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
+//            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
         } else {
             dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType) o[0]).drinks);
         }

@@ -2,7 +2,9 @@ package nagaiko.track_alcohol.recyclerview;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 
@@ -12,7 +14,7 @@ import nagaiko.track_alcohol.R;
  * Created by Konstantin on 24.10.2017.
  */
 
-public class ListRecyclerAdapter extends RecyclerView.Adapter<ListViewHolder> {
+public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
     public final String[] names;
@@ -22,6 +24,25 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListViewHolder> {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.names = names;
 //        this.ingredient = ingredient;
+    }
+
+    public class ListViewHolder extends RecyclerView.ViewHolder {
+
+        public void setName(String text) {
+            name.setText(text);
+        }
+//    public void setIngredient(String text){ingredient.setText("Ingredient: " + text + ",...");}
+
+        private TextView name;
+//    private TextView ingredient;
+
+        public ListViewHolder(View itemView) {
+            super(itemView);
+
+            name = (TextView)itemView.findViewById(R.id.name);
+//        ingredient = (TextView)itemView.findViewById(R.id.ingredient);
+        }
+
     }
 
     @Override

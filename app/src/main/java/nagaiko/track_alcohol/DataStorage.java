@@ -1,6 +1,8 @@
 package nagaiko.track_alcohol;
 
 
+import java.util.ArrayList;
+
 /**
  * Created by altair on 24.10.17.
  */
@@ -18,10 +20,10 @@ public class DataStorage {
     public static final int COCKTAIL_FILTERED_LIST = 0;
     private static final int ARRAY_SIZE = 1;
 
-    public Object[] data;
+    public ArrayList data;
 
     public DataStorage() {
-        this.data = new Object[ARRAY_SIZE];
+        this.data = new ArrayList();
     }
 
     public void setData(int position, Object data) {
@@ -29,7 +31,7 @@ public class DataStorage {
             throw new IndexOutOfBoundsException("position must be one of list?");
         }
         synchronized(this) {
-            this.data[position] = data;
+            this.data.add(data);
         }
     }
 
@@ -38,7 +40,7 @@ public class DataStorage {
             throw new IndexOutOfBoundsException("position must be one of list?");
         }
         synchronized (this) {
-            return this.data[position];
+            return this.data.get(position);
         }
     }
 }
