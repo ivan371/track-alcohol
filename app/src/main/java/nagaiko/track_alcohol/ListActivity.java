@@ -1,5 +1,6 @@
 package nagaiko.track_alcohol;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,7 @@ public class ListActivity extends AppCompatActivity {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
-    private RecyclerFragment fragment;
+    private Fragment fragment;
 
 
     private DataStorage dataStorage = DataStorage.getInstance();
@@ -25,8 +26,11 @@ public class ListActivity extends AppCompatActivity {
 
         final FragmentManager fm = getSupportFragmentManager();
 
-        if(dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST) == null){
+//        Log.d(LOG_TAG, (String)dataStorage.getData(0));
+
+        if(dataStorage.data.isEmpty()){
             if (savedInstanceState == null) {
+                fragment = new ErrorFragment();
                 fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
             }
         } else {
