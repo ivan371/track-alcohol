@@ -10,11 +10,13 @@ public class MainActivity extends AppCompatActivity {
     public static boolean isLoaded = false;
     public static boolean isPaused = false;
     public static StringBuffer downloadedData = new StringBuffer("");
+    private DBHelper dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
             downloadDataFragment = new DownloadDataFragment();
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             downloadDataFragment = (DownloadDataFragment) getSupportFragmentManager().findFragmentByTag(DOWNLOAD_TAG);
         }
+        dataBase = new DBHelper(this);
     }
 
     @Override
