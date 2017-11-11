@@ -64,7 +64,7 @@ public class RecyclerFragment extends Fragment implements
         names = new String[data.length];
 //        ingredient = new String[data.length];
         for (int i = 0; i < data.length; i++){
-            names[i] = data[i].name;
+            names[i] = data[i].getName();
 //            ingredient[i] = data[i].categoryName;
         }
 

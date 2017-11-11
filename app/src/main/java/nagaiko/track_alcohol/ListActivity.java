@@ -6,8 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import nagaiko.track_alcohol.fragments.ErrorFragment;
 import nagaiko.track_alcohol.fragments.RecyclerFragment;
+import nagaiko.track_alcohol.models.Cocktail;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -15,7 +18,7 @@ public class ListActivity extends AppCompatActivity {
 
     private Fragment fragment;
 
-
+    private DBHelper dataBase;
     private DataStorage dataStorage = DataStorage.getInstance();
 
     @Override

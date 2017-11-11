@@ -19,6 +19,6 @@ public class DetailActivity extends AppCompatActivity {
         textView= (TextView) findViewById(R.id.textView);
         Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
         int position = getIntent().getIntExtra("position", defaultValue);
-        textView.setText(data[position].name);
+        textView.setText(data[position].getName());
     }
 }
