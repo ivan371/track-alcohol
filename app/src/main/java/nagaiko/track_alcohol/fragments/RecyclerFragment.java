@@ -29,8 +29,10 @@ public class RecyclerFragment extends Fragment implements
 
     int currentVisiblePosition = 0;
     private static final String VISIBLE_POSITION = "position";
+    private static final String ID_COCKTAIL = "idCocktail";
 
     private static String[] names;
+    private static int[] ids;
     private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
 
@@ -62,9 +64,11 @@ public class RecyclerFragment extends Fragment implements
         Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
 
         names = new String[data.length];
+        ids = new int[data.length];
 //        ingredient = new String[data.length];
         for (int i = 0; i < data.length; i++){
             names[i] = data[i].getName();
+            ids[i] = data[i].getId();
 //            ingredient[i] = data[i].categoryName;
         }
 
@@ -90,7 +94,8 @@ public class RecyclerFragment extends Fragment implements
     public void onItemClick(View view, int position) {
 //        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra("position", position);
+        intent.putExtra(ID_COCKTAIL, ids[position]);
+
         startActivity(intent);
     }
 

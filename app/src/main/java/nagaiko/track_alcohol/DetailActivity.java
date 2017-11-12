@@ -21,30 +21,47 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     private DataStorage dataStorage = DataStorage.getInstance();
     private static final String POSITION = "position";
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
+    private static final String IS_COCKTAIL_EMPRY = "is_cocktail_empty";
+    private static final String ID_COCKTAIL = "idCocktail";
     private boolean isFinish = false;
     private boolean isOnline = false;
+    private boolean isEmpty = false;
     private int idDrink = 0;
+    private DBHelper dataBase;
     int position = 0;
     ApiDataDownloadService.ApiServiceProxy proxy = null;
     TextView instructions;
-    Cocktail[] data;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int defaultValue = 0;
-        TextView textView;
         setContentView(R.layout.activity_detail);
         textView= (TextView) findViewById(R.id.textView);
-        data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
-        position = getIntent().getIntExtra(POSITION, defaultValue);
-        idDrink = data[position].getId();
+        instructions = (TextView) findViewById(R.id.textView1);
+        dataBase = new DBHelper(this);
+        idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
+            isEmpty = savedInstanceState.getBoolean(IS_COCKTAIL_EMPRY);
         }
-        Intent intent = new Intent(this, ApiDataDownloadService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
-        textView.setText(data[position].getName());
+        Cocktail cocktail = dataBase.getCocktailById(idDrink);
+        // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
+        if (cocktail != null) {
+            isEmpty = true;
+            makeDetail(cocktail);
+        }
+        else {
+//            isEmpty = true; TO_DO если в БД нет такого коктеля, то не биндим сервис
+            Intent intent = new Intent(this, ApiDataDownloadService.class);
+            bindService(intent, this, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    private void makeDetail(Cocktail cocktail) {
+        textView.setText(cocktail.getName());
+        instructions.setText(cocktail.getInstruction());
     }
 
     @Override
@@ -89,22 +106,20 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
 
     @Override
     public void onPostExecute(Object[] o) {
-        if (o == null || o[0] == null) {
+        if (o == null || o[0] == null || ((Request.ResponseType) o[0]).drinks == null) {
 //            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
 //            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
         } else {
-            Log.d(LOG_TAG, "o");
-//            if(((Request.ResponseType) o[0]).drinks == null)
-//                Log.d(LOG_TAG, "o");
-//            dataStorage.setEl(position, ((Request.ResponseType) o[0]).drinks[0]);
-//            ((Request.ResponseType) o[0]).drinks[0].setInstruction();
-//            instructions.setText(.instruction);
+            dataBase.addOrUpdateCocktail(((Request.ResponseType) o[0]).drinks[0]);
+            makeDetail(((Request.ResponseType) o[0]).drinks[0]);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(this);
+        if(!isEmpty) {
+            unbindService(this);
+        }
     }
 }
