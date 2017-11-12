@@ -1,20 +1,24 @@
 package nagaiko.track_alcohol;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import nagaiko.track_alcohol.fragments.ErrorFragment;
 import nagaiko.track_alcohol.fragments.RecyclerFragment;
+import nagaiko.track_alcohol.models.Cocktail;
 
 public class ListActivity extends AppCompatActivity {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
-    private RecyclerFragment fragment;
+    private Fragment fragment;
 
-
+    private DBHelper dataBase;
     private DataStorage dataStorage = DataStorage.getInstance();
 
     @Override
@@ -25,8 +29,11 @@ public class ListActivity extends AppCompatActivity {
 
         final FragmentManager fm = getSupportFragmentManager();
 
-        if(dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST) == null){
+//        Log.d(LOG_TAG, (String)dataStorage.getData(0));
+
+        if(dataStorage.data.isEmpty()){
             if (savedInstanceState == null) {
+                fragment = new ErrorFragment();
                 fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
             }
         } else {

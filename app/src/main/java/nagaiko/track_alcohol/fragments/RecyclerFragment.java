@@ -1,5 +1,6 @@
 package nagaiko.track_alcohol.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.models.Cocktail;
@@ -62,7 +64,7 @@ public class RecyclerFragment extends Fragment implements
         names = new String[data.length];
 //        ingredient = new String[data.length];
         for (int i = 0; i < data.length; i++){
-            names[i] = data[i].name;
+            names[i] = data[i].getName();
 //            ingredient[i] = data[i].categoryName;
         }
 
@@ -86,7 +88,10 @@ public class RecyclerFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra("position", position);
+        startActivity(intent);
     }
 
 
