@@ -212,49 +212,49 @@ public class Cocktail {
                  */
     public ArrayList<Ingredient> getIngredients() {
         if (ingredients.isEmpty()) {
-            if (!"".equals(ingredient1)) {
+            if (!"".equals(ingredient1) && ingredient1 != null) {
                 ingredients.add(new Ingredient(ingredient1, measure1));
             }
-            if (!"".equals(ingredient2)) {
+            if (!"".equals(ingredient2) && ingredient2 != null) {
                 ingredients.add(new Ingredient(ingredient2, measure2));
             }
-            if (!"".equals(ingredient3)) {
+            if (!"".equals(ingredient3) && ingredient3 != null) {
                 ingredients.add(new Ingredient(ingredient3, measure3));
             }
-            if (!"".equals(ingredient4)) {
+            if (!"".equals(ingredient4) && ingredient4 != null) {
                 ingredients.add(new Ingredient(ingredient4, measure4));
             }
-            if (!"".equals(ingredient5)) {
+            if (!"".equals(ingredient5) && ingredient5 != null) {
                 ingredients.add(new Ingredient(ingredient5, measure5));
             }
-            if (!"".equals(ingredient6)) {
+            if (!"".equals(ingredient6) && ingredient6 != null) {
                 ingredients.add(new Ingredient(ingredient6, measure6));
             }
-            if (!"".equals(ingredient7)) {
+            if (!"".equals(ingredient7) && ingredient7 != null) {
                 ingredients.add(new Ingredient(ingredient7, measure7));
             }
-            if (!"".equals(ingredient8)) {
+            if (!"".equals(ingredient8) && ingredient8 != null) {
                 ingredients.add(new Ingredient(ingredient8, measure8));
             }
-            if (!"".equals(ingredient9)) {
+            if (!"".equals(ingredient9) && ingredient9 != null) {
                 ingredients.add(new Ingredient(ingredient9, measure9));
             }
-            if (!"".equals(ingredient10)) {
+            if (!"".equals(ingredient10) && ingredient10 != null) {
                 ingredients.add(new Ingredient(ingredient10, measure10));
             }
-            if (!"".equals(ingredient11)) {
+            if (!"".equals(ingredient11) && ingredient11 != null) {
                 ingredients.add(new Ingredient(ingredient11, measure11));
             }
-            if (!"".equals(ingredient12)) {
+            if (!"".equals(ingredient12) && ingredient12 != null) {
                 ingredients.add(new Ingredient(ingredient12, measure12));
             }
-            if (!"".equals(ingredient13)) {
+            if (!"".equals(ingredient13) && ingredient13 != null) {
                 ingredients.add(new Ingredient(ingredient13, measure13));
             }
-            if (!"".equals(ingredient14)) {
+            if (!"".equals(ingredient14) && ingredient14 != null) {
                 ingredients.add(new Ingredient(ingredient14, measure14));
             }
-            if (!"".equals(ingredient15)) {
+            if (!"".equals(ingredient15) && ingredient15 != null) {
                 ingredients.add(new Ingredient(ingredient15, measure15));
             }
         }
