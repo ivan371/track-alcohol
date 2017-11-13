@@ -328,4 +328,8 @@ public class Cocktail {
     public void setIngredients(ArrayList<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
+
+    public boolean isFull() {
+        return instruction != null && !instruction.equals("");
+    }
 }

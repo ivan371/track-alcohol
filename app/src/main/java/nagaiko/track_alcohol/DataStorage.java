@@ -6,12 +6,14 @@ import android.content.Context;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.api.BaseApiAsyncTask;
+import nagaiko.track_alcohol.api.GetCocktailByIdAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailsInCategoryAsyncTask;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.services.IRequest;
 
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_LIST;
 
 /**
@@ -52,6 +54,10 @@ public class DataStorage implements ICallbackOnTask {
         return new GetCocktailsInCategoryAsyncTask(apiKey, this);
     }
 
+    private GetCocktailByIdAsyncTask getCocktailByIdAsyncTask() {
+        return new GetCocktailByIdAsyncTask(apiKey, this);
+    }
+
     public ArrayList<Cocktail> getCocktailsByCategory(String category) {
         ArrayList results = dbHelper.getCocktailsByCategory(category);
         if (results == null || results.size() == 0) {
@@ -62,8 +68,8 @@ public class DataStorage implements ICallbackOnTask {
 
     public Cocktail getCocktailById(int id) {
         Cocktail result = dbHelper.getCocktailById(id);
-        if (result == null) {
-            //TODO: create async task
+        if (result == null || !result.isFull()) {
+            getCocktailByIdAsyncTask().execute(id);
         }
         return result;
     }
@@ -92,6 +98,13 @@ public class DataStorage implements ICallbackOnTask {
                     for (Cocktail cocktail: cocktails) {
                         dbHelper.addOrUpdateCocktail(cocktail);
                     }
+                    dataUpdated = true;
+                }
+                break;
+            case COCKTAIL_INFO:
+                Cocktail cocktail = (Cocktail)response.content;
+                if (cocktail != null) {
+                    dbHelper.addOrUpdateCocktail(cocktail);
                     dataUpdated = true;
                 }
                 break;

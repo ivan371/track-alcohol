@@ -4,6 +4,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
+import nagaiko.track_alcohol.models.Cocktail;
+
 /**
  * Created by Konstantin on 24.10.2017.
  */
@@ -15,8 +19,8 @@ public class ClickRecyclerAdapter extends ListRecyclerAdapter implements View.On
 
     private final OnItemClickListener mClickListener;
 
-    public ClickRecyclerAdapter(LayoutInflater inflater, String[] names, OnItemClickListener listener) {
-        super(inflater, names);
+    public ClickRecyclerAdapter(LayoutInflater inflater, ArrayList<Cocktail> data, OnItemClickListener listener) {
+        super(inflater, data);
         mClickListener = listener;
     }
 

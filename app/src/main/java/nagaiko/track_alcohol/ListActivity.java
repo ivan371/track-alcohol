@@ -19,7 +19,7 @@ public class ListActivity extends AppCompatActivity {
     private Fragment fragment;
 
     private DBHelper dataBase;
-    private DataStorage dataStorage = DataStorage.getInstance();
+    private DataStorage dataStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +28,11 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.list_activity);
 
         final FragmentManager fm = getSupportFragmentManager();
+        dataStorage = DataStorage.getInstanceOrCreate(this);
 
 //        Log.d(LOG_TAG, (String)dataStorage.getData(0));
 
-        if(dataStorage.data.isEmpty()){
+        if (false){
             if (savedInstanceState == null) {
                 fragment = new ErrorFragment();
                 fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
