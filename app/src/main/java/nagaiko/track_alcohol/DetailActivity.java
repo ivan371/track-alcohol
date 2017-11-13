@@ -9,13 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.ErrorFragment;
-import nagaiko.track_alcohol.fragments.RecycleIngridientFragment;
 import nagaiko.track_alcohol.fragments.RecyclerFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.services.ApiDataDownloadService;
@@ -31,7 +28,6 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     private boolean isFinish = false;
     private boolean isOnline = false;
     private boolean isEmpty = false;
-    private Fragment fragment;
     private int idDrink = 0;
     private DBHelper dataBase;
     int position = 0;
@@ -68,11 +64,6 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     private void makeDetail(Cocktail cocktail) {
         textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
-        final FragmentManager fm = getSupportFragmentManager();
-        if(!cocktail.getIngredients().isEmpty()){
-            fragment = new RecyclerFragment();
-            fm.beginTransaction().replace(R.id.fragment, fragment, RecycleIngridientFragment.TAG).commit();
-        }
     }
 
     @Override
