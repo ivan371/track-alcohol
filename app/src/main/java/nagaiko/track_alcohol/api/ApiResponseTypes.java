@@ -1,0 +1,9 @@
+package nagaiko.track_alcohol.api;
+
+/**
+ * Created by altair on 13.11.17.
+ */
+
+public class ApiResponseTypes {
+    public final static int COCKTAIL_LIST = 1;
+}

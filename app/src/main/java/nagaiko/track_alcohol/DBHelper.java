@@ -134,8 +134,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void addOrUpdateCocktail(Cocktail cocktail){
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         if(db != null){
+            Log.d(LOG_TAG, "addOrUpdateCocktail_Begin");
             ContentValues values = new ContentValues();
             values.put("cocktail_id", cocktail.getId());
             values.put("name", cocktail.getName());
@@ -148,10 +149,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
             long conflict =  db.insertWithOnConflict("cocktails", null, values, SQLiteDatabase.CONFLICT_IGNORE);
             if (conflict == -1){
-                db.update("cocktails", values, "cocktail_id=?", new String[]{String.valueOf(cocktail.getId())});
+                Log.d(LOG_TAG, "addOrUpdateCocktail_Conflict");
+                long res = db.update("cocktails", values, "cocktail_id=?", new String[]{String.valueOf(cocktail.getId())});
+                Log.d(LOG_TAG, "response_msg" + res);
             }
             db.close();
         }
+        Log.d(LOG_TAG, "addOrUpdateCocktail_End");
     }
 
     public Cocktail getCocktailById(int id){
