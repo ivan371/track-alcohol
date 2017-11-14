@@ -12,14 +12,14 @@ import nagaiko.track_alcohol.models.Cocktail;
  * Created by Konstantin on 24.10.2017.
  */
 
-public class ClickRecyclerAdapter extends ListRecyclerAdapter implements View.OnClickListener {
+public class ClickCocktailListAdapter extends ListCocktailListAdapter implements View.OnClickListener {
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
     private final OnItemClickListener mClickListener;
 
-    public ClickRecyclerAdapter(LayoutInflater inflater, String[] data, OnItemClickListener listener) {
+    public ClickCocktailListAdapter(LayoutInflater inflater, ArrayList<Cocktail> data, OnItemClickListener listener) {
         super(inflater, data);
         mClickListener = listener;
     }

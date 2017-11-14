@@ -16,11 +16,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 //import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.recyclerview.ListRecyclerAdapter;
 
 /**
  * Created by Konstantin on 24.10.2017.
@@ -36,11 +39,14 @@ public class RecyclerFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-    private ArrayList<Cocktail> data;
+    private DBHelper db;
+    private ArrayList<String> data;
     private DataStorage dataStorage = DataStorage.getInstance();
 
     CocktailListFragment cocktailListFragment = new CocktailListFragment();
     FragmentTransaction fragmentTransaction;
+
+    private String[] categories;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,9 +72,15 @@ public class RecyclerFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
+//        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
 
-        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), data, this));
+        data = db.getCategories();
+        categories = new String[data.size()];
+        for (int i=0; i<data.size(); i++) {
+            categories[i] = data.get(i);
+        }
+
+        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -88,9 +100,18 @@ public class RecyclerFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
+
+        Bundle args = new Bundle();
+        args.putString("category", categories[position]);
+        cocktailListFragment.setArguments(args);
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
 //        Toast.makeText(getActivity(), data.get(position).getName(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
+//        Intent intent = new Intent(getActivity(), DetailActivity.class);
+//        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
 //        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
 //        Intent intent = new Intent(getActivity(), DetailActivity.class);

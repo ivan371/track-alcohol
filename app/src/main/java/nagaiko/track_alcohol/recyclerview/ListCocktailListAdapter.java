@@ -17,13 +17,13 @@ import nagaiko.track_alcohol.models.Cocktail;
  * Created by Konstantin on 24.10.2017.
  */
 
-public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ListViewHolder> {
+public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailListAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
-    public final String[] data;
+    public final ArrayList<Cocktail> data;
 //    public final String[] ingredient;
 
-    public ListRecyclerAdapter(LayoutInflater inflater, String[] data) {
+    public ListCocktailListAdapter(LayoutInflater inflater, ArrayList<Cocktail> data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
 //        this.ingredient = ingredient;
@@ -61,13 +61,13 @@ public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapte
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.setName(data[position]);
+        holder.setName(data.get(position).getName());
 //        holder.setIngredient(ingredient[position]);
     }
 
     @Override
     public int getItemCount() {
-        return data.length;
+        return data.size();
     }
 
 

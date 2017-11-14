@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.models.Cocktail;
@@ -24,7 +25,7 @@ import nagaiko.track_alcohol.models.Cocktail;
  */
 
 public class CocktailListFragment extends Fragment implements
-        ClickRecyclerAdapter.OnItemClickListener{
+        ClickCocktailListAdapter.OnItemClickListener{
     public static final String TAG = RecyclerFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -69,28 +70,9 @@ public class CocktailListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
+        ArrayList<Cocktail> data = dataStorage.getCocktailsByCategory(category);
 
-        // WHAT THE FUCK
-        Toast.makeText(getActivity(), data[1].getCategoryName(), Toast.LENGTH_SHORT).show();
-
-        names = new String[data.length];
-        ids = new int[data.length];
-//        ingredient = new String[data.length];
-        for (int i = 0; i < data.length; i++){
-            names[i] = data[i].getCategoryName();
-            ids[i] = data[i].getId();
-//            ingredient[i] = data[i].categoryName;
-//            if (data[i].getCategoryName().compareTo(category) != 0) {
-//                names[i] = "0";
-//                name.add(data[i].getName());
-//                id.add(data[i].getId());
-//            }
-        }
-//        names = name.toArray(new String[name.size()]);
-//        ids = id.toArray(new Integer[id.size()]);
-
-        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(),names, this));
+        recyclerView.setAdapter(new ClickCocktailListAdapter(getActivity().getLayoutInflater(), data, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -119,3 +101,22 @@ public class CocktailListFragment extends Fragment implements
 
 
 }
+
+////        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
+//
+//    // НЕ РАБОТАЕТ ЕСЛИ ТАК
+////        ListActivity la = (ListActivity) this.getActivity();
+////        String[] data = la.getCategories().toArray(new String[la.getCategories().size()]);
+//    //А ТАК РАБОТАЕТ
+//    String[] data = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
+//            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
+//            "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
+//
+//        names = new String[data.length];
+//                ids = new int[data.length];
+////        ingredient = new String[data.length];
+//                for (int i = 0; i < data.length; i++){
+//        names[i] = data[i];
+////            ids[i] = data[i].getId();
+////            ingredient[i] = data[i].categoryName;
+//        }
