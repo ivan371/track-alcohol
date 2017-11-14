@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+//import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
 import nagaiko.track_alcohol.DataStorage;
@@ -31,9 +34,7 @@ public class RecyclerFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-    private static String[] names;
-    private static int[] ids;
-    private static String[] ingredient;
+    private ArrayList<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
 
 
@@ -61,18 +62,9 @@ public class RecyclerFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
+        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
 
-        names = new String[data.length];
-        ids = new int[data.length];
-//        ingredient = new String[data.length];
-        for (int i = 0; i < data.length; i++){
-            names[i] = data[i].getName();
-            ids[i] = data[i].getId();
-//            ingredient[i] = data[i].categoryName;
-        }
-
-        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(),names, this));
+        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), data, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -92,9 +84,9 @@ public class RecyclerFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-//        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), data.get(position).getName(), Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(ID_COCKTAIL, ids[position]);
+        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
         startActivity(intent);
     }
