@@ -53,7 +53,7 @@ public class CocktailListFragment extends Fragment implements
             currentVisiblePosition = savedInstanceState.getInt(VISIBLE_POSITION);
         }
         category = getArguments().getString("category");
-        Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
 
     }
 

@@ -1,6 +1,9 @@
 package nagaiko.track_alcohol.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 //import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
@@ -74,11 +78,15 @@ public class RecyclerFragment extends Fragment implements
 
 //        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
 
-        data = db.getCategories();
-        categories = new String[data.size()];
-        for (int i=0; i<data.size(); i++) {
-            categories[i] = data.get(i);
-        }
+        categories = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
+            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
+            "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
+
+//        data = db.getCategories();
+//        categories = new String[data.size()];
+//        for (int i=0; i<data.size(); i++) {
+//            categories[i] = data.get(i);
+//        }
 
         recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -105,7 +113,11 @@ public class RecyclerFragment extends Fragment implements
         args.putString("category", categories[position]);
         cocktailListFragment.setArguments(args);
         fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+        if (((ListActivity) getActivity()).isNetworkAvailable()) {
+            fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+        } else {
+            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
+        }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
@@ -119,6 +131,5 @@ public class RecyclerFragment extends Fragment implements
 //
 //        startActivity(intent);
     }
-
 
 }
