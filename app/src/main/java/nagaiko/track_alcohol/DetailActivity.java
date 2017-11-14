@@ -9,12 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Request;
 import nagaiko.track_alcohol.fragments.RecyclerFragment;
 import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 public class DetailActivity extends AppCompatActivity implements ServiceConnection, ICallbackOnTask {
@@ -64,7 +69,15 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     private void makeDetail(Cocktail cocktail) {
         textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
+        ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
+        if(!ingredients.isEmpty()) {
+            RecyclerView ingredientsView = (RecyclerView) findViewById(R.id.ingredients);
+            IngredientRecyclerAdapter adapter = new IngredientRecyclerAdapter(this, ingredients);
+            ingredientsView.setAdapter(adapter);
+            ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
+
 
     @Override
     protected void onResume() {
