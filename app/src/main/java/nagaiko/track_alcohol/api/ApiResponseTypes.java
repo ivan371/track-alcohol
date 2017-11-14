@@ -8,4 +8,5 @@ public class ApiResponseTypes {
     public final static int COCKTAIL_LIST = 1;
     public final static int COCKTAIL_INFO = 2;
     public final static int COCKTAIL_THUMB = 3;
+    public final static int CATEGORIES_LIST = 4;
 }
