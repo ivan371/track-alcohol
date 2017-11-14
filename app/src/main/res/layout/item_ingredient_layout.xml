@@ -9,14 +9,14 @@
     <TextView
         style="@style/TextSimple"
         android:id="@+id/measure"
-        android:layout_gravity="left"
+        android:layout_gravity="right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" />
     <TextView
         style="@style/TextSimple"
         android:id="@+id/ingredient"
-        android:layout_gravity="right"
+        android:layout_gravity="left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" />

@@ -18,7 +18,6 @@ public class Request implements IRequest {
 
     private final static String BASE_API_HOST = "www.thecocktaildb.com";
     private final static String BASE_API_PATH = "api/json/v1/";
-    private static String apiKey = null;
 
     public static final String SEARCH_METHOD = "search.php";
     public static final String LOOKUP_METHOD = "lookup.php";
@@ -42,16 +41,12 @@ public class Request implements IRequest {
         return responseClass;
     }
 
-    public static class ResponseType {
-        public Cocktail[] drinks;
-    }
-
     public static class Builder implements IRequestBuilder {
-        private Context context = null;
+        private String apiKey = null;
         private HttpUrl.Builder httpUrl = null;
 
-        public Builder(Context context) {
-            this.context = context;
+        public Builder(String apiKey) {
+            this.apiKey = apiKey;
         }
 
         public IRequest build() {
@@ -60,19 +55,11 @@ public class Request implements IRequest {
             }
             Request request = new Request();
             request.httpUrl = httpUrl.build();
-            request.responseClass = ResponseType.class;
 
             return request;
         }
 
-        private Context getContext() {
-            return context;
-        }
-
         private String getApiKey() {
-            if (apiKey == null) {
-                apiKey = getContext().getString(R.string.api_key);
-            }
             return apiKey;
         }
 

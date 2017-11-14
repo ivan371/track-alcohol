@@ -10,15 +10,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import nagaiko.track_alcohol.api.ICallbackOnTask;
-import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.services.ApiDataDownloadService;
+import java.util.ArrayList;
+
+import nagaiko.track_alcohol.models.Cocktail;
+
+//import nagaiko.track_alcohol.api.ICallbackOnTask;
+//import nagaiko.track_alcohol.api.Request;
+//import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 /**
  * Created by Konstantin on 23.10.2017.
  */
 
-public class NewMainActivity extends AppCompatActivity implements ICallbackOnTask, ServiceConnection {
+public class NewMainActivity extends AppCompatActivity implements DataStorage.Subscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private static final String DOWNLOAD_TAG = "downloader";
@@ -26,19 +30,21 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private boolean isFinish = false;
     private boolean isOnline = false;
-    private DataStorage dataStorage = DataStorage.getInstance();
-    ApiDataDownloadService.ApiServiceProxy proxy = null;
+    private DataStorage dataStorage = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dataStorage = DataStorage.getInstanceOrCreate(this);
+
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
-
-        Intent intent = new Intent(this, ApiDataDownloadService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        dataStorage.subscribe(this);
+        if (dataStorage.getCocktailsByCategory("Ordinary Drink").size() != 0) {
+            goToNextActivity();
+        }
     }
 
     private void goToNextActivity() {
@@ -48,18 +54,6 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
             finish();
         }
         isFinish = true;
-    }
-
-    @Override
-    public void onPostExecute(Object[] o) {
-        Log.d(LOG_TAG, "onPostExecute");
-        if (o == null || o[0] == null) {
-//            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
-//            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
-        } else {
-            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, ((Request.ResponseType) o[0]).drinks);
-        }
-        goToNextActivity();
     }
 
     @Override
@@ -90,26 +84,14 @@ public class NewMainActivity extends AppCompatActivity implements ICallbackOnTas
     }
 
     @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        proxy = (ApiDataDownloadService.ApiServiceProxy) iBinder;
-        proxy.subscribeOnLoad(this);
-        String categoryName = "Ordinary_Drink";
-
-        Request request = (Request) proxy.getRequestBulder().setFilterMethod(null, null, categoryName, null)
-                .build();
-        proxy.sendApiRequest(this, request);
+    protected void onStop() {
+        dataStorage.unsubscribe(this);
+        super.onStop();
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        if (proxy != null) {
-            proxy.unsubscribeOnLoad(this);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(this);
+    public void onDataUpdated(int dataType) {
+        Log.d(LOG_TAG, "onDataUpdated");
+        goToNextActivity();
     }
 }

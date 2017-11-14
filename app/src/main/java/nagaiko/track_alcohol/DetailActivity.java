@@ -1,14 +1,9 @@
 package nagaiko.track_alcohol;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
@@ -20,12 +15,20 @@ import nagaiko.track_alcohol.api.Request;
 import nagaiko.track_alcohol.fragments.RecyclerFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
-import nagaiko.track_alcohol.services.ApiDataDownloadService;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class DetailActivity extends AppCompatActivity implements ServiceConnection, ICallbackOnTask {
+import nagaiko.track_alcohol.models.Cocktail;
+
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
+//import nagaiko.track_alcohol.services.ApiDataDownloadService;
+
+public class DetailActivity extends AppCompatActivity implements DataStorage.Subscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
-    private DataStorage dataStorage = DataStorage.getInstance();
+    private DataStorage dataStorage;
     private static final String POSITION = "position";
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private static final String IS_COCKTAIL_EMPRY = "is_cocktail_empty";
@@ -34,47 +37,70 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     private boolean isOnline = false;
     private boolean isEmpty = false;
     private int idDrink = 0;
-    private DBHelper dataBase;
     int position = 0;
-    ApiDataDownloadService.ApiServiceProxy proxy = null;
-    TextView instructions;
-    TextView textView;
+    private TextView instructions;
+    private TextView textView;
+    private ImageView thumb;
+
+
+    private Cocktail cocktail;
+    private Bitmap thumbBm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        dataStorage = DataStorage.getInstanceOrCreate(this);
+
         int defaultValue = 0;
         setContentView(R.layout.activity_detail);
-        textView= (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.textView);
         instructions = (TextView) findViewById(R.id.textView1);
-        dataBase = new DBHelper(this);
+        thumb = (ImageView) findViewById(R.id.cocktail_thumb);
+
         idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
             isEmpty = savedInstanceState.getBoolean(IS_COCKTAIL_EMPRY);
         }
-        Cocktail cocktail = dataBase.getCocktailById(idDrink);
+
+        dataStorage.subscribe(this);
+        cocktail = dataStorage.getCocktailById(idDrink);
+        thumbBm = dataStorage.getCocktailThumb(idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
-            makeDetail(cocktail);
-        }
-        else {
-//            isEmpty = true; TO_DO если в БД нет такого коктеля, то не биндим сервис
-            Intent intent = new Intent(this, ApiDataDownloadService.class);
-            bindService(intent, this, Context.BIND_AUTO_CREATE);
+            render();
         }
     }
 
-    private void makeDetail(Cocktail cocktail) {
+    private void setCocktail(Cocktail cocktail) {
+        this.cocktail = cocktail;
+        render();
+    }
+
+    private void setThumb(Bitmap thumb) {
+        if (thumb != null) {
+            thumbBm = thumb;
+        }
+    }
+
+    private void render() {
         textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
         ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
-        if(!ingredients.isEmpty()) {
+        if (!ingredients.isEmpty()) {
             RecyclerView ingredientsView = (RecyclerView) findViewById(R.id.ingredients);
             IngredientRecyclerAdapter adapter = new IngredientRecyclerAdapter(this, ingredients);
             ingredientsView.setAdapter(adapter);
             ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+            ingredientsView.setHasFixedSize(true);
+            RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+            ingredientsView.addItemDecoration(itemDecoration);
+        }
+        if (thumbBm != null) {
+            thumb.setImageBitmap(thumbBm);
         }
     }
 
@@ -104,37 +130,19 @@ public class DetailActivity extends AppCompatActivity implements ServiceConnecti
     }
 
     @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        proxy = (ApiDataDownloadService.ApiServiceProxy) iBinder;
-        proxy.subscribeOnLoad(this);
-        Request request = (Request) proxy.getRequestBulder().setCocktailID(idDrink)
-                .build();
-        proxy.sendApiRequest(this, request);
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        if (proxy != null) {
-            proxy.unsubscribeOnLoad(this);
-        }
-    }
-
-    @Override
-    public void onPostExecute(Object[] o) {
-        if (o == null || o[0] == null || ((Request.ResponseType) o[0]).drinks == null) {
-//            Toast.makeText(this, "Что-то пошло не так. Проверьте ваше интернет соединение.", Toast.LENGTH_SHORT).show();
-//            dataStorage.setData(DataStorage.COCKTAIL_FILTERED_LIST, null);
-        } else {
-            dataBase.addOrUpdateCocktail(((Request.ResponseType) o[0]).drinks[0]);
-            makeDetail(((Request.ResponseType) o[0]).drinks[0]);
-        }
-    }
-
-    @Override
     protected void onDestroy() {
+        dataStorage.unsubscribe(this);
         super.onDestroy();
-        if(!isEmpty) {
-            unbindService(this);
+    }
+
+    @Override
+    public void onDataUpdated(int dataType) {
+        Log.d(LOG_TAG, "onDataUpdated:" + dataType);
+        if (dataType == COCKTAIL_INFO) {
+            setCocktail(dataStorage.getCocktailById(idDrink));
+        } else if (dataType == COCKTAIL_THUMB) {
+            setThumb(dataStorage.getCocktailThumb(idDrink));
+            render();
         }
     }
 }
