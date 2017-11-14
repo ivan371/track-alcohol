@@ -3,7 +3,6 @@ package nagaiko.track_alcohol.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import nagaiko.track_alcohol.DetailActivity;
-import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.models.Cocktail;
@@ -23,7 +23,7 @@ import nagaiko.track_alcohol.models.Cocktail;
  * Created by Konstantin on 24.10.2017.
  */
 
-public class RecyclerFragment extends Fragment implements
+public class CocktailListFragment extends Fragment implements
         ClickRecyclerAdapter.OnItemClickListener{
     public static final String TAG = RecyclerFragment.class.getSimpleName();
 
@@ -35,11 +35,13 @@ public class RecyclerFragment extends Fragment implements
 
     private static String[] names;
     private static int[] ids;
+//private static Integer[] ids;
+//    private static ArrayList<String> name;
+//    private static ArrayList<Integer> id;
     private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
 
-    CocktailListFragment cocktailListFragment = new CocktailListFragment();
-    FragmentTransaction fragmentTransaction;
+    private String category;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class RecyclerFragment extends Fragment implements
             Log.d(TAG, Integer.toString(currentVisiblePosition));
             currentVisiblePosition = savedInstanceState.getInt(VISIBLE_POSITION);
         }
+        category = getArguments().getString("category");
+        Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -65,24 +69,26 @@ public class RecyclerFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        //        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
+        Cocktail[] data = (Cocktail[])dataStorage.getData(DataStorage.COCKTAIL_FILTERED_LIST);
 
-        // НЕ РАБОТАЕТ ЕСЛИ ТАК
-//        ListActivity la = (ListActivity) this.getActivity();
-//        String[] data = la.getCategories().toArray(new String[la.getCategories().size()]);
-        //А ТАК РАБОТАЕТ
-        String[] data = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
-                "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
-                "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
+        // WHAT THE FUCK
+        Toast.makeText(getActivity(), data[1].getCategoryName(), Toast.LENGTH_SHORT).show();
 
         names = new String[data.length];
         ids = new int[data.length];
 //        ingredient = new String[data.length];
         for (int i = 0; i < data.length; i++){
-            names[i] = data[i];
-//            ids[i] = data[i].getId();
+            names[i] = data[i].getCategoryName();
+            ids[i] = data[i].getId();
 //            ingredient[i] = data[i].categoryName;
+//            if (data[i].getCategoryName().compareTo(category) != 0) {
+//                names[i] = "0";
+//                name.add(data[i].getName());
+//                id.add(data[i].getId());
+//            }
         }
+//        names = name.toArray(new String[name.size()]);
+//        ids = id.toArray(new Integer[id.size()]);
 
         recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(),names, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -104,19 +110,11 @@ public class RecyclerFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-        Bundle args = new Bundle();
-        args.putString("category", names[position]);
-        cocktailListFragment.setArguments(args);
-        fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-
 //        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(getActivity(), DetailActivity.class);
-//        intent.putExtra(ID_COCKTAIL, ids[position]);
-//
-//        startActivity(intent);
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.putExtra(ID_COCKTAIL, ids[position]);
+
+        startActivity(intent);
     }
 
 
