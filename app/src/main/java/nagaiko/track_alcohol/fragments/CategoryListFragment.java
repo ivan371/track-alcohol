@@ -16,7 +16,7 @@ import android.widget.Toast;
 import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.recyclerview.ClickCategoryListCategoryListAdapter;
+import nagaiko.track_alcohol.recyclerview.ClickCategoryListAdapter;
 import nagaiko.track_alcohol.DataStorage;
 
 /**
@@ -24,7 +24,7 @@ import nagaiko.track_alcohol.DataStorage;
  */
 
 public class CategoryListFragment extends Fragment implements
-        ClickCategoryListCategoryListAdapter.OnItemClickListener{
+        ClickCategoryListAdapter.OnItemClickListener{
     public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -78,7 +78,7 @@ public class CategoryListFragment extends Fragment implements
 //            categories[i] = data.get(i);
 //        }
 
-        recyclerView.setAdapter(new ClickCategoryListCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
+        recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);

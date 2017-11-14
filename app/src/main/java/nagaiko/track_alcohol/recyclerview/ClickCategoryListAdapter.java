@@ -8,14 +8,14 @@ import android.view.ViewGroup;
  * Created by Konstantin on 24.10.2017.
  */
 
-public class ClickCategoryListCategoryListAdapter extends ListCategoryListAdapter implements View.OnClickListener {
+public class ClickCategoryListAdapter extends ListCategoryListAdapter implements View.OnClickListener {
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
     private final OnItemClickListener mClickListener;
 
-    public ClickCategoryListCategoryListAdapter(LayoutInflater inflater, String[] data, OnItemClickListener listener) {
+    public ClickCategoryListAdapter(LayoutInflater inflater, String[] data, OnItemClickListener listener) {
         super(inflater, data);
         mClickListener = listener;
     }
