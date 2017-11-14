@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.api.BaseApiAsyncTask;
+import nagaiko.track_alcohol.api.GetCategoriesAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailByIdAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailThumbAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailsInCategoryAsyncTask;
@@ -22,6 +23,7 @@ import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.services.IRequest;
 
+import static nagaiko.track_alcohol.api.ApiResponseTypes.CATEGORIES_LIST;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_LIST;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
@@ -86,6 +88,10 @@ public class DataStorage implements ICallbackOnTask {
         return (int)(Math.min(h * 0.7f, w * 0.7f) + 0.5f);
     }
 
+    private GetCategoriesAsyncTask getCategoriesAsyncTask() {
+        return new GetCategoriesAsyncTask(apiKey, this);
+    }
+
     private GetCocktailsInCategoryAsyncTask getCocktailsInCategoryAsyncTask() {
         return new GetCocktailsInCategoryAsyncTask(apiKey, this);
     }
@@ -96,6 +102,14 @@ public class DataStorage implements ICallbackOnTask {
 
     private GetCocktailThumbAsyncTask getCocktailThumbAsyncTask() {
         return new GetCocktailThumbAsyncTask(cacheDir, imageSize, this);
+    }
+
+    public ArrayList<String> getCategories() {
+        ArrayList<String> categories = dbHelper.getCategories();
+        if (categories == null || categories.size() == 0) {
+            getCategoriesAsyncTask().execute();
+        }
+        return categories;
     }
 
     public ArrayList<Cocktail> getCocktailsByCategory(String category) {
@@ -149,6 +163,16 @@ public class DataStorage implements ICallbackOnTask {
         }
         boolean dataUpdated = false;
         switch (type) {
+            case CATEGORIES_LIST:
+                ArrayList<String> categories = (ArrayList<String>)response.content;
+                if (categories != null) {
+                    for (String category: categories) {
+                        dbHelper.addCategory(category);
+                    }
+                    dataUpdated = true;
+                }
+                break;
+
             case COCKTAIL_LIST:
                 Cocktail[] cocktails = (Cocktail[])response.content;
                 if (cocktails != null) {
@@ -173,6 +197,7 @@ public class DataStorage implements ICallbackOnTask {
                     _imageCache.put(cocktailId, bm);
                     dataUpdated = true;
                 }
+                break;
         }
         if (dataUpdated) {
             notifySubscribers(type);
