@@ -42,9 +42,7 @@ public class RecyclerFragment extends Fragment implements
     int currentVisiblePosition = 0;
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
-
-    private DBHelper db;
-    private ArrayList<String> data;
+    
     private DataStorage dataStorage = DataStorage.getInstance();
 
     CocktailListFragment cocktailListFragment = new CocktailListFragment();
