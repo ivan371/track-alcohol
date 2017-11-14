@@ -137,6 +137,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         if(db != null){
             Log.d(LOG_TAG, "addOrUpdateCocktail_Begin");
+            Log.d(LOG_TAG, cocktail.getCategoryName());
             ContentValues values = new ContentValues();
             values.put("cocktail_id", cocktail.getId());
             values.put("name", cocktail.getName());
@@ -182,7 +183,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Cocktail> cocktails = null;
         if(db != null){
             try {
-                cr = db.query("cocktails", column, "categoryName=?" , new String[]{category}, null, null, null);
+                cr = db.query("cocktails", column, "categoryName=?" , new String[]{category}, null, null, "name");
                 cocktails = cocktailsFromCursor(cr);
             } catch (Exception e){
                 Log.d(LOG_TAG,e.getMessage());

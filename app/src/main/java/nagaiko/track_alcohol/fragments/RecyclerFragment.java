@@ -62,7 +62,7 @@ public class RecyclerFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        data = dataStorage.getCocktailsByCategory("Ordinary_Drink");
+        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
 
         recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), data, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

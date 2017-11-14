@@ -1,10 +1,16 @@
 package nagaiko.track_alcohol;
 
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import nagaiko.track_alcohol.models.Cocktail;
+
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
 //import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 public class DetailActivity extends AppCompatActivity implements DataStorage.Subscriber {
@@ -20,10 +26,13 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private boolean isEmpty = false;
     private int idDrink = 0;
     int position = 0;
-    TextView instructions;
-    TextView textView;
+    private TextView instructions;
+    private TextView textView;
+    private ImageView thumb;
+
 
     private Cocktail cocktail;
+    private Bitmap thumbBm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +42,9 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
         int defaultValue = 0;
         setContentView(R.layout.activity_detail);
-        textView= (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.textView);
         instructions = (TextView) findViewById(R.id.textView1);
+        thumb = (ImageView) findViewById(R.id.cocktail_thumb);
 
         idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
@@ -44,6 +54,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
         dataStorage.subscribe(this);
         cocktail = dataStorage.getCocktailById(idDrink);
+        thumbBm = dataStorage.getCocktailThumb(idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
@@ -56,9 +67,18 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         render();
     }
 
+    private void setThumb(Bitmap thumb) {
+        if (thumb != null) {
+            thumbBm = thumb;
+        }
+    }
+
     private void render() {
         textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
+        if (thumbBm != null) {
+            thumb.setImageBitmap(thumbBm);
+        }
     }
 
     @Override
@@ -87,14 +107,18 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     @Override
     protected void onDestroy() {
-        if(!isEmpty) {
-            dataStorage.unsubscribe(this);
-        }
+        dataStorage.unsubscribe(this);
         super.onDestroy();
     }
 
     @Override
     public void onDataUpdated(int dataType) {
-        setCocktail(dataStorage.getCocktailById(idDrink));
+        Log.d(LOG_TAG, "onDataUpdated:" + dataType);
+        if (dataType == COCKTAIL_INFO) {
+            setCocktail(dataStorage.getCocktailById(idDrink));
+        } else if (dataType == COCKTAIL_THUMB) {
+            setThumb(dataStorage.getCocktailThumb(idDrink));
+            render();
+        }
     }
 }

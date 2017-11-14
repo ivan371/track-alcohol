@@ -42,7 +42,7 @@ public class NewMainActivity extends AppCompatActivity implements DataStorage.Su
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
         dataStorage.subscribe(this);
-        if (dataStorage.getCocktailsByCategory("Ordinary_Drink").size() != 0) {
+        if (dataStorage.getCocktailsByCategory("Ordinary Drink").size() != 0) {
             goToNextActivity();
         }
     }

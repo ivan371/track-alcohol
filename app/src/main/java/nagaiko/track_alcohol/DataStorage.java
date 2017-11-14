@@ -3,13 +3,19 @@ package nagaiko.track_alcohol;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
+import android.util.DisplayMetrics;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.api.BaseApiAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailByIdAsyncTask;
+import nagaiko.track_alcohol.api.GetCocktailThumbAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailsInCategoryAsyncTask;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Response;
@@ -45,12 +51,16 @@ public class DataStorage implements ICallbackOnTask {
     public static final int COCKTAIL_FILTERED_LIST = 0;
 
     private DBHelper dbHelper;
+    private File cacheDir;
+    private int imageSize;
     private LruCache<Integer, Bitmap> _imageCache;
     private String apiKey;
     private ArrayList<Subscriber> subscribers;
 
     private DataStorage(Context context) {
         dbHelper = new DBHelper(context);
+        cacheDir = context.getCacheDir();
+        imageSize = updateImageSize(context.getResources().getDisplayMetrics());
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
@@ -65,12 +75,27 @@ public class DataStorage implements ICallbackOnTask {
         subscribers = new ArrayList<>();
     }
 
+    private static int updateImageSize(DisplayMetrics dm) {
+        int h = dm.heightPixels;
+        int w = dm.widthPixels;
+        if (w > h) {
+            int tmp = w;
+            w = h;
+            h = tmp;
+        }
+        return (int)(Math.min(h * 0.7f, w * 0.7f) + 0.5f);
+    }
+
     private GetCocktailsInCategoryAsyncTask getCocktailsInCategoryAsyncTask() {
         return new GetCocktailsInCategoryAsyncTask(apiKey, this);
     }
 
     private GetCocktailByIdAsyncTask getCocktailByIdAsyncTask() {
         return new GetCocktailByIdAsyncTask(apiKey, this);
+    }
+
+    private GetCocktailThumbAsyncTask getCocktailThumbAsyncTask() {
+        return new GetCocktailThumbAsyncTask(cacheDir, imageSize, this);
     }
 
     public ArrayList<Cocktail> getCocktailsByCategory(String category) {
@@ -92,7 +117,12 @@ public class DataStorage implements ICallbackOnTask {
     public Bitmap getCocktailThumb(int id) {
         Bitmap bm = _imageCache.get(id);
         if (bm == null) {
-            //TODO: добавить создание таска на загрузку картинки
+            Cocktail cocktail = getCocktailById(id);
+            if (cocktail != null) {
+                GetCocktailThumbAsyncTask task = getCocktailThumbAsyncTask();
+                Bundle bundle = GetCocktailThumbAsyncTask.GetParametersBunble(id, cocktail.getThumb());
+                task.execute(bundle);
+            }
         }
         return bm;
     }
@@ -113,6 +143,10 @@ public class DataStorage implements ICallbackOnTask {
 
     @Override
     public void onPostExecute(int type, Response response) {
+
+        if (response == null) {
+            return;
+        }
         boolean dataUpdated = false;
         switch (type) {
             case COCKTAIL_LIST:
