@@ -29,7 +29,6 @@ public class ListActivity extends AppCompatActivity {
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
-//        Log.d(LOG_TAG, (String)dataStorage.getData(0));
 
         if (false){
             if (savedInstanceState == null) {
