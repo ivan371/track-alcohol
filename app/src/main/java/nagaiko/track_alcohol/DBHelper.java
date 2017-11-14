@@ -30,14 +30,15 @@ import nagaiko.track_alcohol.models.Cocktail;
 
 public class DBHelper extends SQLiteOpenHelper {
     public final static String DB_NAME = "cocktails";
-    public final static int DB_VER = 2;
+    public final static int DB_VER = 1;
     private AssetManager assetManager;
     String[] column = new String[]{"cocktail_id", "name", "categoryName", "iba", "alcoholic", "glass", "instruction", "thumb"};
-    private final static String INGREDIENTS = "CREATE TABLE ingredientS (ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT);";
+    private final static String INGREDIENTS = "CREATE TABLE ingredients (ingredient_id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT);";
     private final static String CATEGORIES = "CREATE TABLE categories (category_id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT);";
     private final static String COCKTAILS = "CREATE TABLE cocktails (cocktail_id INTEGER PRIMARY KEY, name TEXT, categoryName TEXT, iba TEXT, " +
             "alcoholic TEXT, glass TEXT, instruction TEXT, thumb TEXT);";
     private final static String INGREDIENTS_IN_COCKTAILS = "CREATE TABLE ingr_cocktails (cocktail_id INTEGER, ingredient_id INTEGER, " +
+            "measure TEXT, \n" +
             "PRIMARY KEY (cocktail_id, ingredient_id), \n" +
             "FOREIGN KEY (cocktail_id) REFERENCES cocktails (cocktails_id) ON DELETE CASCADE ON UPDATE NO ACTION, \n" +
             "FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id) ON DELETE CASCADE ON UPDATE NO ACTION);";
@@ -133,8 +134,32 @@ public class DBHelper extends SQLiteOpenHelper {
         return category;
     }
 
-    public void addOrUpdateCocktail(Cocktail cocktail){
+    public ArrayList<String> getCategories(){
         SQLiteDatabase db = getReadableDatabase();
+        Cursor cr = null;
+        ArrayList<String> list = new ArrayList<>();
+        if (db != null){
+            try {
+                cr = db.query("categories", new String[]{"category"}, null , null, null, null, null);
+                cr.moveToFirst();
+                while (!cr.isAfterLast()){
+                    list.add(cr.getString(cr.getColumnIndexOrThrow("category")));
+                    cr.moveToNext();
+                }
+            } catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            } finally {
+                if(cr != null) cr.close();
+            }
+            db.close();
+
+        }
+
+        return list;
+    }
+
+    public void addOrUpdateCocktail(Cocktail cocktail){
+        SQLiteDatabase db = getWritableDatabase();
         if(db != null){
             ContentValues values = new ContentValues();
             values.put("cocktail_id", cocktail.getId());
@@ -152,6 +177,11 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             db.close();
         }
+        for (Cocktail.Ingredient ingredient: cocktail.getIngredients()){
+            long id = getIdOrInsertIngredient(ingredient.getName());
+            insertOrUpdateIngredientInCocktail(cocktail.getId(), id, ingredient.getMeasure());
+        }
+
     }
 
     public Cocktail getCocktailById(int id){
@@ -162,6 +192,26 @@ public class DBHelper extends SQLiteOpenHelper {
             try {
                 cr = db.query("cocktails", column, "cocktail_id=?" , new String[]{String.valueOf(id)}, null, null, null);
                 cocktail = cocktailsFromCursor(cr).get(0);
+                cocktail.setIngredients(ingredientsForCoctails(cocktail.getId()));
+            } catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            }finally {
+                if (cr != null) cr.close();
+            }
+            db.close();
+        }
+        return cocktail;
+    }
+
+    public Cocktail getCocktailByName(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cr = null;
+        Cocktail cocktail = null;
+        if(db != null){
+            try {
+                cr = db.query("cocktails", column, "name=?" , new String[]{name}, null, null, null);
+                cocktail = cocktailsFromCursor(cr).get(0);
+                cocktail.setIngredients(ingredientsForCoctails(cocktail.getId()));
             } catch (Exception e){
                 Log.d(LOG_TAG,e.getMessage());
             }finally {
@@ -180,6 +230,9 @@ public class DBHelper extends SQLiteOpenHelper {
             try {
                 cr = db.query("cocktails", column, "categoryName=?" , new String[]{category}, null, null, null);
                 cocktails = cocktailsFromCursor(cr);
+                for (Cocktail cocktail: cocktails){
+                    cocktail.setIngredients(ingredientsForCoctails(cocktail.getId()));
+                }
             } catch (Exception e){
                 Log.d(LOG_TAG,e.getMessage());
             }finally {
@@ -210,6 +263,75 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor.moveToNext();
         }
         return cocktails;
+    }
+
+    private ArrayList<Cocktail.Ingredient> ingredientsForCoctails(int id){
+        ArrayList<Cocktail.Ingredient> list = new ArrayList< Cocktail.Ingredient>();
+        SQLiteDatabase db = getReadableDatabase();
+        String table = "cocktails as C inner join ingr_cocktails as IC on C.cocktail_id = IC.cocktail_id " +
+                "inner join ingredients as I on IC.ingredient_id = I.ingredient_id";
+        String columns[] ={"I.name as name", "IC.measure as measure"};
+        Cursor cr = null;
+        if(db != null){
+            try {
+                cr = db.query(table, columns, "C.cocktail_id = ?", new String[]{String.valueOf(id)}, null, null, null);
+                cr.moveToFirst();
+                while (!cr.isAfterLast()){
+                    String name = cr.getString(cr.getColumnIndexOrThrow("name"));
+                    String measure = cr.getString(cr.getColumnIndexOrThrow("measure"));
+                    Cocktail.Ingredient ingredient = new Cocktail.Ingredient(name, measure);
+                    list.add(ingredient);
+                    cr.moveToNext();
+                }
+            }catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            }finally {
+                if (cr != null) cr.close();
+            }
+            db.close();
+        }
+        return list;
+    }
+
+    private long getIdOrInsertIngredient(String name){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cr =  null;
+        long id = 0;
+        if(db != null){
+            try {
+                cr = db.query("ingredients", new String[]{"ingredient_id"}, "name = ?", new String[]{name}, null, null, null);
+                if (cr.moveToFirst()){
+                    id = cr.getInt(cr.getColumnIndexOrThrow("ingredient_id"));
+                }else {
+                    ContentValues v = new ContentValues();
+                    v.put("name", name);
+                    id = db.insert("ingredients", null, v);
+                }
+            }catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            }finally {
+                if (cr != null) cr.close();
+            }
+            db.close();
+        }
+
+        return id;
+    }
+
+    private void insertOrUpdateIngredientInCocktail(long cocktail_id, long ingredient_id, String measure){
+        SQLiteDatabase db = getWritableDatabase();
+        if(db != null){
+            ContentValues value = new ContentValues();
+            value.put("cocktail_id", cocktail_id);
+            value.put("ingredient_id", ingredient_id);
+            value.put("measure", measure);
+            long conflict =  db.insertWithOnConflict("ingr_cocktails", null, value, SQLiteDatabase.CONFLICT_IGNORE);
+            if (conflict == -1){
+                db.update("ingr_cocktails", value, "cocktail_id=? AND ingredient_id=?",
+                        new String[]{String.valueOf(cocktail_id), String.valueOf(ingredient_id)});
+            }
+            db.close();
+        }
     }
 
 }
