@@ -95,94 +95,94 @@ public class Cocktail {
         List of ingredients and its measures.
      */
     @SerializedName("strIngredient1")
-    private String ingredient1;
+    private String ingredient1 = "";
 
     @SerializedName("strMeasure1")
-    private String measure1;
+    private String measure1 = "";
 
     @SerializedName("strIngredient2")
-    private String ingredient2;
+    private String ingredient2 = "";
 
     @SerializedName("strMeasure2")
-    private String measure2;
+    private String measure2 = "";
 
     @SerializedName("strIngredient3")
-    private String ingredient3;
+    private String ingredient3 = "";
 
     @SerializedName("strMeasure3")
-    private String measure3;
+    private String measure3 = "";
 
     @SerializedName("strIngredient4")
-    private String ingredient4;
+    private String ingredient4 = "";
 
     @SerializedName("strMeasure4")
-    private String measure4;
+    private String measure4 = "";
 
     @SerializedName("strIngredient5")
-    private String ingredient5;
+    private String ingredient5 = "";
 
     @SerializedName("strMeasure5")
-    private String measure5;
+    private String measure5 = "";
 
     @SerializedName("strIngredient6")
-    private String ingredient6;
+    private String ingredient6 = "";
 
     @SerializedName("strMeasure6")
-    private String measure6;
+    private String measure6 = "";
 
     @SerializedName("strIngredient7")
-    private String ingredient7;
+    private String ingredient7 = "";
 
     @SerializedName("strMeasure7")
-    private String measure7;
+    private String measure7 = "";
 
     @SerializedName("strIngredient8")
-    private String ingredient8;
+    private String ingredient8 = "";
 
     @SerializedName("strMeasure8")
-    private String measure8;
+    private String measure8 = "";
 
     @SerializedName("strIngredient9")
-    private String ingredient9;
+    private String ingredient9 = "";
 
     @SerializedName("strMeasure9")
-    private String measure9;
+    private String measure9 = "";
 
     @SerializedName("strIngredient10")
-    private String ingredient10;
+    private String ingredient10 = "";
 
     @SerializedName("strMeasure10")
-    private String measure10;
+    private String measure10 = "";
 
     @SerializedName("strIngredient11")
-    private String ingredient11;
+    private String ingredient11 = "";
 
     @SerializedName("strMeasure11")
-    private String measure11;
+    private String measure11 = "";
 
     @SerializedName("strIngredient12")
-    private String ingredient12;
+    private String ingredient12 = "";
 
     @SerializedName("strMeasure12")
-    private String measure12;
+    private String measure12 = "";
 
     @SerializedName("strIngredient13")
-    private String ingredient13;
+    private String ingredient13 = "";
 
     @SerializedName("strMeasure13")
-    private String measure13;
+    private String measure13 = "";
 
     @SerializedName("strIngredient14")
-    private String ingredient14;
+    private String ingredient14 = "";
 
     @SerializedName("strMeasure14")
-    private String measure14;
+    private String measure14 = "";
 
     @SerializedName("strIngredient15")
-    private String ingredient15;
+    private String ingredient15 = "";
 
     @SerializedName("strMeasure15")
-    private String measure15;
+    private String measure15 = "";
 
     /*
         List of ingredients in array.
@@ -212,49 +212,49 @@ public class Cocktail {
                  */
     public ArrayList<Ingredient> getIngredients() {
         if (ingredients.isEmpty()) {
-            if (!"".equals(ingredient1) && ingredient1 != null) {
+            if (!"".equals(ingredient1)) {
                 ingredients.add(new Ingredient(ingredient1, measure1));
             }
-            if (!"".equals(ingredient2) && ingredient2 != null) {
+            if (!"".equals(ingredient2)) {
                 ingredients.add(new Ingredient(ingredient2, measure2));
             }
-            if (!"".equals(ingredient3) && ingredient3 != null) {
+            if (!"".equals(ingredient3)) {
                 ingredients.add(new Ingredient(ingredient3, measure3));
             }
-            if (!"".equals(ingredient4) && ingredient4 != null) {
+            if (!"".equals(ingredient4)) {
                 ingredients.add(new Ingredient(ingredient4, measure4));
             }
-            if (!"".equals(ingredient5) && ingredient5 != null) {
+            if (!"".equals(ingredient5)) {
                 ingredients.add(new Ingredient(ingredient5, measure5));
             }
-            if (!"".equals(ingredient6) && ingredient6 != null) {
+            if (!"".equals(ingredient6)) {
                 ingredients.add(new Ingredient(ingredient6, measure6));
             }
-            if (!"".equals(ingredient7) && ingredient7 != null) {
+            if (!"".equals(ingredient7)) {
                 ingredients.add(new Ingredient(ingredient7, measure7));
             }
-            if (!"".equals(ingredient8) && ingredient8 != null) {
+            if (!"".equals(ingredient8)) {
                 ingredients.add(new Ingredient(ingredient8, measure8));
             }
-            if (!"".equals(ingredient9) && ingredient9 != null) {
+            if (!"".equals(ingredient9)) {
                 ingredients.add(new Ingredient(ingredient9, measure9));
             }
-            if (!"".equals(ingredient10) && ingredient10 != null) {
+            if (!"".equals(ingredient10)) {
                 ingredients.add(new Ingredient(ingredient10, measure10));
             }
-            if (!"".equals(ingredient11) && ingredient11 != null) {
+            if (!"".equals(ingredient11)) {
                 ingredients.add(new Ingredient(ingredient11, measure11));
             }
-            if (!"".equals(ingredient12) && ingredient12 != null) {
+            if (!"".equals(ingredient12)) {
                 ingredients.add(new Ingredient(ingredient12, measure12));
             }
-            if (!"".equals(ingredient13) && ingredient13 != null) {
+            if (!"".equals(ingredient13)) {
                 ingredients.add(new Ingredient(ingredient13, measure13));
             }
-            if (!"".equals(ingredient14) && ingredient14 != null) {
+            if (!"".equals(ingredient14)) {
                 ingredients.add(new Ingredient(ingredient14, measure14));
             }
-            if (!"".equals(ingredient15) && ingredient15 != null) {
+            if (!"".equals(ingredient15)) {
                 ingredients.add(new Ingredient(ingredient15, measure15));
             }
         }
