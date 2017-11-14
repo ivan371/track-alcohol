@@ -1,9 +1,5 @@
 package nagaiko.track_alcohol.fragments;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,33 +12,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 //import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.DBHelper;
-import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
-import nagaiko.track_alcohol.recyclerview.ClickRecyclerAdapter;
+import nagaiko.track_alcohol.recyclerview.ClickCategoryListCategoryListAdapter;
 import nagaiko.track_alcohol.DataStorage;
-import nagaiko.track_alcohol.models.Cocktail;
-import nagaiko.track_alcohol.recyclerview.ListRecyclerAdapter;
 
 /**
  * Created by Konstantin on 24.10.2017.
  */
 
-public class RecyclerFragment extends Fragment implements
-        ClickRecyclerAdapter.OnItemClickListener{
-    public static final String TAG = RecyclerFragment.class.getSimpleName();
+public class CategoryListFragment extends Fragment implements
+        ClickCategoryListCategoryListAdapter.OnItemClickListener{
+    public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
 
     int currentVisiblePosition = 0;
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
-    
+
     private DataStorage dataStorage = DataStorage.getInstance();
 
     CocktailListFragment cocktailListFragment = new CocktailListFragment();
@@ -75,10 +65,12 @@ public class RecyclerFragment extends Fragment implements
         recyclerView = new RecyclerView(getActivity());
 
 //        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
+        DBHelper db = new DBHelper(this.getActivity());
+        categories = db.getCategories().toArray(new String[db.getCategories().size()]);
 
-        categories = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
-            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
-            "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
+//        categories = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
+//            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
+//            "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
 
 //        data = db.getCategories();
 //        categories = new String[data.size()];
@@ -86,7 +78,7 @@ public class RecyclerFragment extends Fragment implements
 //            categories[i] = data.get(i);
 //        }
 
-        recyclerView.setAdapter(new ClickRecyclerAdapter(getActivity().getLayoutInflater(), categories, this));
+        recyclerView.setAdapter(new ClickCategoryListCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);

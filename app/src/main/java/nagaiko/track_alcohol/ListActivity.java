@@ -9,11 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.ArrayList;
-
 import nagaiko.track_alcohol.fragments.ErrorFragment;
-import nagaiko.track_alcohol.fragments.RecyclerFragment;
-import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.fragments.CategoryListFragment;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -40,10 +37,10 @@ public class ListActivity extends AppCompatActivity {
             }
         } else {
             if (savedInstanceState == null) {
-                fragment = new RecyclerFragment();
-                fm.beginTransaction().replace(R.id.fragment, fragment, RecyclerFragment.TAG).commit();
+                fragment = new CategoryListFragment();
+                fm.beginTransaction().replace(R.id.fragment, fragment, CategoryListFragment.TAG).commit();
             }else {
-                fragment = (RecyclerFragment) getSupportFragmentManager().findFragmentByTag(RecyclerFragment.TAG);
+                fragment = (CategoryListFragment) getSupportFragmentManager().findFragmentByTag(CategoryListFragment.TAG);
             }
         }
 

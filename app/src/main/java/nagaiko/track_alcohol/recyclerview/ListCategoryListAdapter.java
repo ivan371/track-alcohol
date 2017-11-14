@@ -7,23 +7,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.models.Cocktail;
 
 /**
  * Created by Konstantin on 24.10.2017.
  */
 
-public class ListRecyclerAdapter extends RecyclerView.Adapter<ListRecyclerAdapter.ListViewHolder> {
+public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryListAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
     public final String[] data;
 //    public final String[] ingredient;
 
-    public ListRecyclerAdapter(LayoutInflater inflater, String[] data) {
+    public ListCategoryListAdapter(LayoutInflater inflater, String[] data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
 //        this.ingredient = ingredient;
