@@ -133,8 +133,32 @@ public class DBHelper extends SQLiteOpenHelper {
         return category;
     }
 
-    public void addOrUpdateCocktail(Cocktail cocktail){
+    public ArrayList<String> getCategories(){
         SQLiteDatabase db = getReadableDatabase();
+        Cursor cr = null;
+        ArrayList<String> list = new ArrayList<>();
+        if (db != null){
+            try {
+                cr = db.query("categories", new String[]{"category"}, null , null, null, null, null);
+                cr.moveToFirst();
+                while (!cr.isAfterLast()){
+                    list.add(cr.getString(cr.getColumnIndexOrThrow("category")));
+                    cr.moveToNext();
+                }
+            } catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            } finally {
+                if(cr != null) cr.close();
+            }
+            db.close();
+
+        }
+
+        return list;
+    }
+
+    public void addOrUpdateCocktail(Cocktail cocktail){
+        SQLiteDatabase db = getWritableDatabase();
         if(db != null){
             ContentValues values = new ContentValues();
             values.put("cocktail_id", cocktail.getId());
@@ -161,6 +185,24 @@ public class DBHelper extends SQLiteOpenHelper {
         if(db != null){
             try {
                 cr = db.query("cocktails", column, "cocktail_id=?" , new String[]{String.valueOf(id)}, null, null, null);
+                cocktail = cocktailsFromCursor(cr).get(0);
+            } catch (Exception e){
+                Log.d(LOG_TAG,e.getMessage());
+            }finally {
+                if (cr != null) cr.close();
+            }
+            db.close();
+        }
+        return cocktail;
+    }
+
+    public Cocktail getCocktailByName(String name){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cr = null;
+        Cocktail cocktail = null;
+        if(db != null){
+            try {
+                cr = db.query("cocktails", column, "name=?" , new String[]{name}, null, null, null);
                 cocktail = cocktailsFromCursor(cr).get(0);
             } catch (Exception e){
                 Log.d(LOG_TAG,e.getMessage());
