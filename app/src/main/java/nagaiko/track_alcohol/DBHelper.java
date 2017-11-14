@@ -228,7 +228,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Cocktail> cocktails = null;
         if(db != null){
             try {
-                cr = db.query("cocktails", column, "categoryName=?" , new String[]{category}, null, null, null);
+                cr = db.query("cocktails", column, "categoryName=?" , new String[]{category}, null, null, "name");
                 cocktails = cocktailsFromCursor(cr);
                 for (Cocktail cocktail: cocktails){
                     cocktail.setIngredients(ingredientsForCoctails(cocktail.getId()));
