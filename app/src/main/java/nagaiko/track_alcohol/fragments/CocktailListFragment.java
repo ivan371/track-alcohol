@@ -32,11 +32,12 @@ public class CocktailListFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-    private static String[] names;
-    private static int[] ids;
+//    private static String[] names;
+//    private static int[] ids;
 //private static Integer[] ids;
 //    private static ArrayList<String> name;
 //    private static ArrayList<Integer> id;
+    ArrayList<Cocktail> data;
     private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
 
@@ -68,7 +69,7 @@ public class CocktailListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        ArrayList<Cocktail> data = dataStorage.getCocktailsByCategory(category);
+        data = dataStorage.getCocktailsByCategory(category);
 
         recyclerView.setAdapter(new ClickCocktailListAdapter(getActivity().getLayoutInflater(), data, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -92,7 +93,7 @@ public class CocktailListFragment extends Fragment implements
     public void onItemClick(View view, int position) {
 //        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(ID_COCKTAIL, ids[position]);
+        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
         startActivity(intent);
     }
