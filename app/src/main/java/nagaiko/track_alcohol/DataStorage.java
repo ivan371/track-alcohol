@@ -2,6 +2,9 @@ package nagaiko.track_alcohol;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v4.util.LruCache;
+import android.support.v4.util.Pair;
 
 import java.util.ArrayList;
 
@@ -15,6 +18,7 @@ import nagaiko.track_alcohol.services.IRequest;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_LIST;
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
 
 /**
  * Created by altair on 24.10.17.
@@ -35,17 +39,28 @@ public class DataStorage implements ICallbackOnTask {
     }
 
     public interface Subscriber {
-        void onDataUpdated();
+        void onDataUpdated(int dataType);
     }
 
     public static final int COCKTAIL_FILTERED_LIST = 0;
 
     private DBHelper dbHelper;
+    private LruCache<Integer, Bitmap> _imageCache;
     private String apiKey;
     private ArrayList<Subscriber> subscribers;
 
     private DataStorage(Context context) {
         dbHelper = new DBHelper(context);
+
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+        _imageCache = new LruCache<Integer, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(Integer key, Bitmap bitmap) {
+                return bitmap.getRowBytes() * bitmap.getHeight() / 1024;
+            }
+        };
+
         apiKey = context.getString(R.string.api_key);
         subscribers = new ArrayList<>();
     }
@@ -74,6 +89,14 @@ public class DataStorage implements ICallbackOnTask {
         return result;
     }
 
+    public Bitmap getCocktailThumb(int id) {
+        Bitmap bm = _imageCache.get(id);
+        if (bm == null) {
+            //TODO: добавить создание таска на загрузку картинки
+        }
+        return bm;
+    }
+
     public boolean subscribe(Subscriber subscriber) {
         return subscribers.add(subscriber);
     }
@@ -82,9 +105,9 @@ public class DataStorage implements ICallbackOnTask {
         return subscribers.remove(subscriber);
     }
 
-    private void notifySubscribers() {
+    private void notifySubscribers(int type) {
         for (Subscriber subscriber: subscribers) {
-            subscriber.onDataUpdated();
+            subscriber.onDataUpdated(type);
         }
     }
 
@@ -108,9 +131,17 @@ public class DataStorage implements ICallbackOnTask {
                     dataUpdated = true;
                 }
                 break;
+            case COCKTAIL_THUMB:
+                Pair<Integer, Bitmap> idWithBm = (Pair<Integer, Bitmap>)response.content;
+                if (idWithBm != null) {
+                    int cocktailId = idWithBm.first;
+                    Bitmap bm = idWithBm.second;
+                    _imageCache.put(cocktailId, bm);
+                    dataUpdated = true;
+                }
         }
         if (dataUpdated) {
-            notifySubscribers();
+            notifySubscribers(type);
         }
     }
 }

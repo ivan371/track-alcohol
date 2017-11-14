@@ -18,7 +18,6 @@ public class ListActivity extends AppCompatActivity {
 
     private Fragment fragment;
 
-    private DBHelper dataBase;
     private DataStorage dataStorage;
 
     @Override

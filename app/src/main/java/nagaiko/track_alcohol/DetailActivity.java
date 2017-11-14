@@ -94,7 +94,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     @Override
-    public void onDataUpdated() {
+    public void onDataUpdated(int dataType) {
         setCocktail(dataStorage.getCocktailById(idDrink));
     }
 }
