@@ -48,6 +48,7 @@ public class DataStorage implements ICallbackOnTask {
 
     public interface Subscriber {
         void onDataUpdated(int dataType);
+        void onDataUpdateFail();
     }
 
     public static final int COCKTAIL_FILTERED_LIST = 0;
@@ -157,7 +158,6 @@ public class DataStorage implements ICallbackOnTask {
 
     @Override
     public void onPostExecute(int type, Response response) {
-
         if (response == null) {
             return;
         }
@@ -201,6 +201,13 @@ public class DataStorage implements ICallbackOnTask {
         }
         if (dataUpdated) {
             notifySubscribers(type);
+        }
+    }
+
+    @Override
+    public void onFailExecute() {
+        for (Subscriber subscriber: subscribers) {
+            subscriber.onDataUpdateFail();
         }
     }
 }

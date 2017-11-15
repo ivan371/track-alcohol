@@ -42,7 +42,7 @@ public class NewMainActivity extends AppCompatActivity implements DataStorage.Su
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
         dataStorage.subscribe(this);
-        if (dataStorage.getCocktailsByCategory("Ordinary Drink").size() != 0) {
+        if (dataStorage.getCategories().size() != 0) {
             goToNextActivity();
         }
     }
@@ -93,5 +93,10 @@ public class NewMainActivity extends AppCompatActivity implements DataStorage.Su
     public void onDataUpdated(int dataType) {
         Log.d(LOG_TAG, "onDataUpdated");
         goToNextActivity();
+    }
+
+    @Override
+    public void onDataUpdateFail() {
+        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
     }
 }

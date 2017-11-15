@@ -104,11 +104,11 @@ public class CategoryListFragment extends Fragment implements
         args.putString("category", categories[position]);
         cocktailListFragment.setArguments(args);
         fragmentTransaction = getFragmentManager().beginTransaction();
-        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
+//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
             fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-        } else {
-            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
+//        }
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
 
