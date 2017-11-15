@@ -12,9 +12,8 @@
         android:gravity="center_vertical">
 
         <ImageView
+            style="@style/ImageSimple"
             android:id="@+id/coctail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@drawable/coctail"/>
         <LinearLayout
             android:layout_width="match_parent"
