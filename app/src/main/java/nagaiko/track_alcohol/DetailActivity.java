@@ -17,6 +17,7 @@ import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
@@ -141,4 +142,10 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             render();
         }
     }
+
+    @Override
+    public void onDataUpdateFail() {
+        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+    }
+
 }

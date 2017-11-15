@@ -47,6 +47,7 @@ public class CocktailListFragment extends Fragment implements
     private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
     private FragmentTransaction fragmentTransaction;
+    private ClickCocktailListAdapter recyclerAdapter;
 
     private String category;
 
@@ -79,7 +80,8 @@ public class CocktailListFragment extends Fragment implements
 
         data = dataStorage.getCocktailsByCategory(category);
 
-        recyclerView.setAdapter(new ClickCocktailListAdapter(getActivity().getLayoutInflater(), data, this));
+        recyclerAdapter = new ClickCocktailListAdapter(getActivity().getLayoutInflater(), data, this);
+        recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -107,14 +109,14 @@ public class CocktailListFragment extends Fragment implements
     public void onItemClick(View view, int position) {
 //        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
         DBHelper db = new DBHelper(this.getActivity());
-        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailById(data.get(position).getId())!=null) {
+//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailById(data.get(position).getId())!=null) {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
             startActivity(intent);
-        } else {
-            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
@@ -128,6 +130,12 @@ public class CocktailListFragment extends Fragment implements
 //        fragmentTransaction.commit();
         data = dataStorage.getCocktailsByCategory(category);
         fragmentTransaction.detach(this).attach(this).commit();
+//        recyclerAdapter.setNewData(data);
+    }
+
+    @Override
+    public void onDataUpdateFail() {
+        Toast.makeText(this.getActivity(), "Can't download data", Toast.LENGTH_SHORT).show();
     }
 
 }

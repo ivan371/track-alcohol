@@ -6,4 +6,5 @@ package nagaiko.track_alcohol.api;
 
 public interface ICallbackOnTask {
     void onPostExecute(int type, Response response);
+    void onFailExecute();
 }

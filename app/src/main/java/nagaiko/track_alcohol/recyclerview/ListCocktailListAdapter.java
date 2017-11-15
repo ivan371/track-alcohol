@@ -22,7 +22,7 @@ import nagaiko.track_alcohol.models.Cocktail;
 public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailListAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
-    public final ArrayList<Cocktail> data;
+    protected ArrayList<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
 //    public final String[] ingredient;
 
@@ -86,5 +86,10 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
     @Override
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
+    }
+
+    public void setNewData(ArrayList<Cocktail> cocktails) {
+        data = cocktails;
+        notifyDataSetChanged();
     }
 }
