@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.DBHelper;
+
 import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
@@ -123,7 +124,9 @@ public class CocktailListFragment extends Fragment implements
         Bundle args = new Bundle();
         args.putString("category", category);
         cocktailListFragment.setArguments(args);
-        fragmentTransaction.replace(R.id.fragment, cocktailListFragment).commit();
+        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
 }
