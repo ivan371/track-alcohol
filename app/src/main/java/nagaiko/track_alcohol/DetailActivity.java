@@ -3,15 +3,23 @@ package nagaiko.track_alcohol;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ImageView;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import nagaiko.track_alcohol.api.ICallbackOnTask;
+import nagaiko.track_alcohol.api.Request;
+import nagaiko.track_alcohol.fragments.RecyclerFragment;
 import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
+import android.util.Log;
+import android.widget.ImageView;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
-//import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 public class DetailActivity extends AppCompatActivity implements DataStorage.Subscriber {
 
@@ -76,10 +84,22 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private void render() {
         textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
+        ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
+        if (!ingredients.isEmpty()) {
+            RecyclerView ingredientsView = (RecyclerView) findViewById(R.id.ingredients);
+            IngredientRecyclerAdapter adapter = new IngredientRecyclerAdapter(this, ingredients);
+            ingredientsView.setAdapter(adapter);
+            ingredientsView.setLayoutManager(new LinearLayoutManager(this));
+            ingredientsView.setHasFixedSize(true);
+            RecyclerView.ItemDecoration itemDecoration = new
+                    DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+//            ingredientsView.addItemDecoration(itemDecoration);
+        }
         if (thumbBm != null) {
             thumb.setImageBitmap(thumbBm);
         }
     }
+
 
     @Override
     protected void onResume() {
