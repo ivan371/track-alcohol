@@ -17,13 +17,9 @@ import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import nagaiko.track_alcohol.models.Cocktail;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
-//import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 public class DetailActivity extends AppCompatActivity implements DataStorage.Subscriber {
 
@@ -97,7 +93,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             ingredientsView.setHasFixedSize(true);
             RecyclerView.ItemDecoration itemDecoration = new
                     DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-            ingredientsView.addItemDecoration(itemDecoration);
+//            ingredientsView.addItemDecoration(itemDecoration);
         }
         if (thumbBm != null) {
             thumb.setImageBitmap(thumbBm);
