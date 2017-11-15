@@ -99,11 +99,12 @@ public class CategoryListFragment extends Fragment implements
     @Override
     public void onItemClick(View view, int position) {
 
+        DBHelper db = new DBHelper(this.getActivity());
         Bundle args = new Bundle();
         args.putString("category", categories[position]);
         cocktailListFragment.setArguments(args);
         fragmentTransaction = getFragmentManager().beginTransaction();
-        if (((ListActivity) getActivity()).isNetworkAvailable()) {
+        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
             fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
         } else {
             Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
