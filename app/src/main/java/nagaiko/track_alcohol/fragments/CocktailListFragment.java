@@ -125,7 +125,6 @@ public class CocktailListFragment extends Fragment implements
         args.putString("category", category);
         cocktailListFragment.setArguments(args);
         fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 

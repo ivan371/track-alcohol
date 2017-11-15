@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.RecyclerFragment;
+import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 import android.util.Log;
