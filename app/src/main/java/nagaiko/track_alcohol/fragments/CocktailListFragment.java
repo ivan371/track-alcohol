@@ -120,12 +120,14 @@ public class CocktailListFragment extends Fragment implements
     @Override
     public void onDataUpdated(int dataType) {
         fragmentTransaction = getFragmentManager().beginTransaction();
-        CocktailListFragment cocktailListFragment = new CocktailListFragment();
-        Bundle args = new Bundle();
-        args.putString("category", category);
-        cocktailListFragment.setArguments(args);
-        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-        fragmentTransaction.commit();
+//        CocktailListFragment cocktailListFragment = new CocktailListFragment();
+//        Bundle args = new Bundle();
+//        args.putString("category", category);
+//        cocktailListFragment.setArguments(args);
+//        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+//        fragmentTransaction.commit();
+        data = dataStorage.getCocktailsByCategory(category);
+        fragmentTransaction.detach(this).attach(this).commit();
     }
 
 }
