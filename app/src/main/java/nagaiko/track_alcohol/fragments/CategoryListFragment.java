@@ -65,8 +65,8 @@ public class CategoryListFragment extends Fragment implements
         recyclerView = new RecyclerView(getActivity());
 
 //        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
-        DBHelper db = new DBHelper(this.getActivity());
-        categories = db.getCategories().toArray(new String[db.getCategories().size()]);
+//        DBHelper db = new DBHelper(this.getActivity());
+        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
 //        categories = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
 //            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
