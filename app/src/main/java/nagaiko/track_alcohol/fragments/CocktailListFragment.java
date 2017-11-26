@@ -2,6 +2,7 @@ package nagaiko.track_alcohol.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -135,7 +136,19 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this.getActivity(), "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.getView(), R.string.no_internet, Toast.LENGTH_SHORT)
+        .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    CocktailListFragment cocktailListFragment = this;
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            getFragmentManager().beginTransaction()
+                    .detach(cocktailListFragment).attach(cocktailListFragment).commit();
+//                    .replace(R.id.fragment, new CocktailListFragment()).commit();
+//            Toast.makeText(getActivity(), "reloaded", Toast.LENGTH_SHORT).show();
+        }
+    };
 
 }

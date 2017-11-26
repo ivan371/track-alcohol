@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">track-alcohol</string>
-    <string name="no_internet">You have not Internet!!!!</string>
+    <string name="no_internet">Can\'t download data</string>
+    <string name="action">try again</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

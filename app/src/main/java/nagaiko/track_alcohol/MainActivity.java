@@ -6,12 +6,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nagaiko.track_alcohol.fragments.CocktailListFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 
 //import nagaiko.track_alcohol.api.ICallbackOnTask;
@@ -97,6 +100,18 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Toast.LENGTH_SHORT)
+                .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onRestart();
+//            getFragmentManager().beginTransaction()
+//                    .detach(cocktailListFragment).attach(cocktailListFragment).commit();
+//                    .replace(R.id.fragment, new CocktailListFragment()).commit();
+//            Toast.makeText(getActivity(), "reloaded", Toast.LENGTH_SHORT).show();
+        }
+    };
 }
