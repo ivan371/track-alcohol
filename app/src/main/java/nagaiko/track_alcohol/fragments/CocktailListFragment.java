@@ -39,11 +39,6 @@ public class CocktailListFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-//    private static String[] names;
-//    private static int[] ids;
-//private static Integer[] ids;
-//    private static ArrayList<String> name;
-//    private static ArrayList<Integer> id;
     ArrayList<Cocktail> data;
     private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
@@ -62,7 +57,6 @@ public class CocktailListFragment extends Fragment implements
         }
         category = getArguments().getString("category");
         dataStorage.subscribe(this);
-//        Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -108,30 +102,18 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-//        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
         DBHelper db = new DBHelper(this.getActivity());
-//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailById(data.get(position).getId())!=null) {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
             startActivity(intent);
-//        } else {
-//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
     public void onDataUpdated(int dataType) {
         fragmentTransaction = getFragmentManager().beginTransaction();
-//        CocktailListFragment cocktailListFragment = new CocktailListFragment();
-//        Bundle args = new Bundle();
-//        args.putString("category", category);
-//        cocktailListFragment.setArguments(args);
-//        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-//        fragmentTransaction.commit();
         data = dataStorage.getCocktailsByCategory(category);
         fragmentTransaction.detach(this).attach(this).commit();
-//        recyclerAdapter.setNewData(data);
     }
 
     @Override
@@ -146,8 +128,6 @@ public class CocktailListFragment extends Fragment implements
         public void onClick(View view) {
             getFragmentManager().beginTransaction()
                     .detach(cocktailListFragment).attach(cocktailListFragment).commit();
-//                    .replace(R.id.fragment, new CocktailListFragment()).commit();
-//            Toast.makeText(getActivity(), "reloaded", Toast.LENGTH_SHORT).show();
         }
     };
 

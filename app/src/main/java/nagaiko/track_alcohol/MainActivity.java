@@ -1,25 +1,12 @@
 package nagaiko.track_alcohol;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-
-import nagaiko.track_alcohol.fragments.CocktailListFragment;
-import nagaiko.track_alcohol.models.Cocktail;
-
-//import nagaiko.track_alcohol.api.ICallbackOnTask;
-//import nagaiko.track_alcohol.api.Request;
-//import nagaiko.track_alcohol.services.ApiDataDownloadService;
 
 /**
  * Created by Konstantin on 23.10.2017.
@@ -108,10 +95,6 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         @Override
         public void onClick(View view) {
             onRestart();
-//            getFragmentManager().beginTransaction()
-//                    .detach(cocktailListFragment).attach(cocktailListFragment).commit();
-//                    .replace(R.id.fragment, new CocktailListFragment()).commit();
-//            Toast.makeText(getActivity(), "reloaded", Toast.LENGTH_SHORT).show();
         }
     };
 }
