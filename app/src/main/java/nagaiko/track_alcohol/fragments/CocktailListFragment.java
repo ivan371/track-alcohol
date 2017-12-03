@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +17,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.DBHelper;
-
-import nagaiko.track_alcohol.DetailActivity;
-import nagaiko.track_alcohol.ListActivity;
-import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 import nagaiko.track_alcohol.DataStorage;
+import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 
 /**
  * Created by Konstantin on 24.10.2017.
