@@ -21,7 +21,7 @@ import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
  * Created by altair on 14.11.17.
  */
 
-public class GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Response<Pair<Integer, Bitmap>>> {
+public class    GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Response<Pair<Integer, Bitmap>>> {
 
     public final static String COCKTAIL_ID_BUNDLE_KEY = "COCKTAIL_ID_BUNDLE_KEY";
     public final static String URL_BUNDLE_KEY = "URL_BUNDLE_KEY";

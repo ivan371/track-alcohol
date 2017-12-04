@@ -18,11 +18,11 @@ import nagaiko.track_alcohol.models.Cocktail;
 
 public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRecyclerAdapter.IngredientViewHolder>{
 
-    public class IngredientViewHolder extends RecyclerView.ViewHolder {
+    protected class IngredientViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView measureTextView;
-        public TextView ingredientTextView;
-        public IngredientViewHolder(View itemView) {
+        private TextView measureTextView;
+        private TextView ingredientTextView;
+        private IngredientViewHolder(View itemView) {
             super(itemView);
             measureTextView = itemView.findViewById(R.id.measure);
             ingredientTextView = itemView.findViewById(R.id.ingredient);
