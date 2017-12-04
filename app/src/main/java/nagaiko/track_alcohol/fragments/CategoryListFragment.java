@@ -102,15 +102,15 @@ public class CategoryListFragment extends Fragment implements
         DBHelper db = new DBHelper(this.getActivity());
         Bundle args = new Bundle();
         args.putString("category", categories[position]);
-        cocktailListFragment.setArguments(args);
-        fragmentTransaction = getFragmentManager().beginTransaction();
-//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
-            fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-//        } else {
-//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-//        }
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+//        cocktailListFragment.setArguments(args);
+//        fragmentTransaction = getFragmentManager().beginTransaction();
+////        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
+//            fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+////        } else {
+////            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
+////        }
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
 
 //        Toast.makeText(getActivity(), data.get(position).getName(), Toast.LENGTH_SHORT).show();
 //        Intent intent = new Intent(getActivity(), DetailActivity.class);

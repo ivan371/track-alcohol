@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -24,6 +24,17 @@
     <style name="ImageSimple">
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">100dp</item>
+    </style>
+    <style name="ToolbarTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlActivated">#ffffff</item>
+        <item name="colorControlNormal">#ffffff</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="actionMenuTextColor">@android:color/holo_green_light</item>
+        <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
+
     </style>
 
 </resources>
