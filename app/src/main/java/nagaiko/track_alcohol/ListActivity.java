@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -37,25 +38,31 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        if (false){
-//            if (savedInstanceState == null) {
-//                fragment = new ErrorFragment();
-//                fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
-//            }
-//        } else {
-//            if (savedInstanceState == null) {
-//                fragment = new CategoryListFragment();
-//                fm.beginTransaction().replace(R.id.fragment, fragment, CategoryListFragment.TAG).commit();
-//            }else {
-//                fragment = (CategoryListFragment) getSupportFragmentManager().findFragmentByTag(CategoryListFragment.TAG);
-//            }
-//        }
+        if (false){
+            if (savedInstanceState == null) {
+                fragment = new ErrorFragment();
+                fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
+            }
+        } else {
+            if (savedInstanceState == null) {
+                fragment = new CategoryListFragment();
+                fm.beginTransaction().replace(R.id.fragment, fragment, CategoryListFragment.TAG).commit();
+            }else {
+                fragment = (CategoryListFragment) getSupportFragmentManager().findFragmentByTag(CategoryListFragment.TAG);
+            }
+        }
 
     }
 

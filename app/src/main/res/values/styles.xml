@@ -32,9 +32,12 @@
         <item name="colorControlActivated">#ffffff</item>
         <item name="colorControlNormal">#ffffff</item>
         <item name="android:textColor">#ffffff</item>
+        <item name="android:layout_marginTop">30dp</item>
         <item name="actionMenuTextColor">@android:color/holo_green_light</item>
         <item name="android:textColorPrimary">@android:color/holo_blue_light</item>
-
     </style>
 
+    <style name="ListTheme">
+        <item name="android:layout_marginTop">60dp</item>
+    </style>
 </resources>
