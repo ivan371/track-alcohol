@@ -3,19 +3,21 @@ package nagaiko.track_alcohol.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+//import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.DBHelper;
-import nagaiko.track_alcohol.DataStorage;
+import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.recyclerview.ClickCategoryListAdapter;
-
+import nagaiko.track_alcohol.DataStorage;
 
 /**
  * Created by Konstantin on 24.10.2017.
@@ -29,7 +31,9 @@ public class CategoryListFragment extends Fragment implements
 
     int currentVisiblePosition = 0;
     private static final String VISIBLE_POSITION = "position";
+    private static final String ID_COCKTAIL = "idCocktail";
 
+    private DataStorage dataStorage = DataStorage.getInstance();
 
     CocktailListFragment cocktailListFragment = new CocktailListFragment();
     FragmentTransaction fragmentTransaction;
@@ -59,8 +63,8 @@ public class CategoryListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
-        DBHelper db = new DBHelper(this.getActivity());
-        categories = db.getCategories().toArray(new String[db.getCategories().size()]);
+
+        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -77,7 +81,7 @@ public class CategoryListFragment extends Fragment implements
     @Override
     public void onResume(){
         super.onResume();
-        recyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPosition(currentVisiblePosition);
     }
 
     @Override
@@ -88,11 +92,9 @@ public class CategoryListFragment extends Fragment implements
         args.putString("category", categories[position]);
         cocktailListFragment.setArguments(args);
         fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-
+        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
     }
 
 }

@@ -2,10 +2,11 @@ package nagaiko.track_alcohol;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
-
 
 /**
  * Created by Konstantin on 23.10.2017.
@@ -86,6 +87,14 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Toast.LENGTH_SHORT)
+                .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onRestart();
+        }
+    };
 }

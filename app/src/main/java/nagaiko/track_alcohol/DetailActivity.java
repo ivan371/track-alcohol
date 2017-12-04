@@ -1,15 +1,14 @@
 package nagaiko.track_alcohol;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -140,7 +139,15 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Toast.LENGTH_SHORT)
+                .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onRestart();
+        }
+    };
 
 }

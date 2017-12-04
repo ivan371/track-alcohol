@@ -2,6 +2,7 @@ package nagaiko.track_alcohol.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 
@@ -86,7 +88,7 @@ public class CocktailListFragment extends Fragment implements
     @Override
     public void onResume(){
         super.onResume();
-        recyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+        ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPosition(currentVisiblePosition);
     }
 
     @Override
@@ -98,10 +100,10 @@ public class CocktailListFragment extends Fragment implements
     @Override
     public void onItemClick(View view, int position) {
         DBHelper db = new DBHelper(this.getActivity());
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
+            Intent intent = new Intent(getActivity(), DetailActivity.class);
+            intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
-        startActivity(intent);
+            startActivity(intent);
     }
 
     @Override
@@ -113,7 +115,17 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this.getActivity(), "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.getView(), R.string.no_internet, Toast.LENGTH_SHORT)
+        .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    CocktailListFragment cocktailListFragment = this;
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            getFragmentManager().beginTransaction()
+                    .detach(cocktailListFragment).attach(cocktailListFragment).commit();
+        }
+    };
 
 }
