@@ -116,7 +116,7 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onDataUpdateFail() {
-        Snackbar.make(this.getView(), R.string.no_internet, Toast.LENGTH_SHORT)
+        Snackbar.make(this.getView(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
         .setAction(R.string.action, snackbarOnClickListener).show();
     }
 

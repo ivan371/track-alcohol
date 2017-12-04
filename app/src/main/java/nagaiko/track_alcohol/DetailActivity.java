@@ -147,14 +147,14 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     @Override
     public void onDataUpdateFail() {
-        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Toast.LENGTH_SHORT)
+        Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.action, snackbarOnClickListener).show();
     }
 
     View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onRestart();
+            recreate();
         }
     };
 
