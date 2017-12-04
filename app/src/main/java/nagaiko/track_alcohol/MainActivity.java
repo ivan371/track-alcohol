@@ -1,47 +1,91 @@
 package nagaiko.track_alcohol;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
 
-    private DownloadDataFragment downloadDataFragment;
+/**
+ * Created by Konstantin on 23.10.2017.
+ */
+
+public class MainActivity extends AppCompatActivity implements DataStorage.Subscriber {
+
+    public final String LOG_TAG = this.getClass().getSimpleName();
     private static final String DOWNLOAD_TAG = "downloader";
-    public static boolean isLoaded = false;
-    public static boolean isPaused = false;
-    public static StringBuffer downloadedData = new StringBuffer("");
-    private DBHelper dataBase;
 
-    @Override
+    private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
+    private boolean isFinish = false;
+    private boolean isOnline = false;
+    private DataStorage dataStorage = null;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            downloadDataFragment = new DownloadDataFragment();
+        dataStorage = DataStorage.getInstanceOrCreate(this);
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_activity, downloadDataFragment, DOWNLOAD_TAG)
-                    .commit();
-            downloadDataFragment.startTask();
-        } else {
-            downloadDataFragment = (DownloadDataFragment) getSupportFragmentManager().findFragmentByTag(DOWNLOAD_TAG);
+        if (savedInstanceState != null) {
+            isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
-        dataBase = new DBHelper(this);
+        dataStorage.subscribe(this);
+        if (dataStorage.getCategories().size() != 0) {
+            goToNextActivity();
+        }
+    }
+
+    private void goToNextActivity() {
+        if (isOnline) {
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        isFinish = true;
     }
 
     @Override
     protected void onResume() {
+        isOnline = true;
+        if (isFinish) {
+            goToNextActivity();
+        }
         super.onResume();
-        isPaused = false;
-        downloadDataFragment.StartApp(downloadedData);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        isPaused = true;
+        isOnline = false;
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(IS_FINISH_BUNDLE_KEY, isFinish);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
+    }
+
+    @Override
+    protected void onStop() {
+        dataStorage.unsubscribe(this);
+        super.onStop();
+    }
+
+    @Override
+    public void onDataUpdated(int dataType) {
+        Log.d(LOG_TAG, "onDataUpdated");
+        goToNextActivity();
+    }
+
+    @Override
+    public void onDataUpdateFail() {
+        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+    }
 }

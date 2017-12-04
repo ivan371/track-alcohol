@@ -3,13 +3,12 @@ package nagaiko.track_alcohol;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
-import nagaiko.track_alcohol.fragments.ErrorFragment;
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
 
 public class ListActivity extends AppCompatActivity {
@@ -29,19 +28,11 @@ public class ListActivity extends AppCompatActivity {
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
-
-        if (false){
-            if (savedInstanceState == null) {
-                fragment = new ErrorFragment();
-                fm.beginTransaction().replace(R.id.fragment, fragment, ErrorFragment.TAG).commit();
-            }
-        } else {
-            if (savedInstanceState == null) {
-                fragment = new CategoryListFragment();
-                fm.beginTransaction().replace(R.id.fragment, fragment, CategoryListFragment.TAG).commit();
-            }else {
-                fragment = (CategoryListFragment) getSupportFragmentManager().findFragmentByTag(CategoryListFragment.TAG);
-            }
+        if (savedInstanceState == null) {
+            fragment = new CategoryListFragment();
+            fm.beginTransaction().replace(R.id.fragment, fragment, CategoryListFragment.TAG).commit();
+        }else {
+            fragment = getSupportFragmentManager().findFragmentByTag(CategoryListFragment.TAG);
         }
 
     }

@@ -1,23 +1,20 @@
 package nagaiko.track_alcohol;
 
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import nagaiko.track_alcohol.api.ICallbackOnTask;
-import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
-import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
@@ -26,7 +23,6 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private DataStorage dataStorage;
-    private static final String POSITION = "position";
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private static final String IS_COCKTAIL_EMPRY = "is_cocktail_empty";
     private static final String ID_COCKTAIL = "idCocktail";
@@ -34,7 +30,6 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private boolean isOnline = false;
     private boolean isEmpty = false;
     private int idDrink = 0;
-    int position = 0;
     private TextView instructions;
     private TextView textView;
     private ImageView thumb;
