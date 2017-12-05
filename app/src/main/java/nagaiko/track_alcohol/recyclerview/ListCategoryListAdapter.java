@@ -18,12 +18,10 @@ public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryLi
 
     private final WeakReference<LayoutInflater> mInflater;
     public final String[] data;
-//    public final String[] ingredient;
 
     public ListCategoryListAdapter(LayoutInflater inflater, String[] data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
-//        this.ingredient = ingredient;
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
@@ -31,16 +29,13 @@ public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryLi
         public void setName(String text) {
             name.setText(text);
         }
-//    public void setIngredient(String text){ingredient.setText("Ingredient: " + text + ",...");}
 
         private TextView name;
-//    private TextView ingredient;
 
         public ListViewHolder(View itemView) {
             super(itemView);
 
-            name = (TextView)itemView.findViewById(R.id.name);
-//        ingredient = (TextView)itemView.findViewById(R.id.ingredient);
+            name = itemView.findViewById(R.id.name);
         }
 
     }
@@ -59,7 +54,6 @@ public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryLi
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
         holder.setName(data[position]);
-//        holder.setIngredient(ingredient[position]);
     }
 
     @Override

@@ -2,11 +2,12 @@ package nagaiko.track_alcohol.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.DividerItemDecoration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +17,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nagaiko.track_alcohol.DBHelper;
-
-import nagaiko.track_alcohol.DetailActivity;
-import nagaiko.track_alcohol.ListActivity;
-import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 import nagaiko.track_alcohol.DataStorage;
+import nagaiko.track_alcohol.DetailActivity;
+import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.models.Cocktail;
+import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 
 /**
  * Created by Konstantin on 24.10.2017.
@@ -38,13 +37,7 @@ public class CocktailListFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-//    private static String[] names;
-//    private static int[] ids;
-//private static Integer[] ids;
-//    private static ArrayList<String> name;
-//    private static ArrayList<Integer> id;
     ArrayList<Cocktail> data;
-    private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
     private FragmentTransaction fragmentTransaction;
     private ClickCocktailListAdapter recyclerAdapter;
@@ -61,7 +54,6 @@ public class CocktailListFragment extends Fragment implements
         }
         category = getArguments().getString("category");
         dataStorage.subscribe(this);
-//        Toast.makeText(getActivity(), category, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -107,35 +99,33 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-//        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
         DBHelper db = new DBHelper(this.getActivity());
-//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailById(data.get(position).getId())!=null) {
             Intent intent = new Intent(getActivity(), DetailActivity.class);
             intent.putExtra(ID_COCKTAIL, data.get(position).getId());
 
             startActivity(intent);
-//        } else {
-//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
     public void onDataUpdated(int dataType) {
         fragmentTransaction = getFragmentManager().beginTransaction();
-//        CocktailListFragment cocktailListFragment = new CocktailListFragment();
-//        Bundle args = new Bundle();
-//        args.putString("category", category);
-//        cocktailListFragment.setArguments(args);
-//        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-//        fragmentTransaction.commit();
         data = dataStorage.getCocktailsByCategory(category);
         fragmentTransaction.detach(this).attach(this).commit();
-//        recyclerAdapter.setNewData(data);
     }
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this.getActivity(), "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.getView(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+        .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    CocktailListFragment cocktailListFragment = this;
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            getFragmentManager().beginTransaction()
+                    .detach(cocktailListFragment).attach(cocktailListFragment).commit();
+        }
+    };
 
 }

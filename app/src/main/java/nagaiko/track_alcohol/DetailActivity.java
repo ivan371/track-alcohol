@@ -1,23 +1,27 @@
 package nagaiko.track_alcohol;
 
 import android.graphics.Bitmap;
+
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import nagaiko.track_alcohol.api.ICallbackOnTask;
-import nagaiko.track_alcohol.api.Request;
-import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
-import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
@@ -26,7 +30,6 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private DataStorage dataStorage;
-    private static final String POSITION = "position";
     private static final String IS_FINISH_BUNDLE_KEY = "is_finish";
     private static final String IS_COCKTAIL_EMPRY = "is_cocktail_empty";
     private static final String ID_COCKTAIL = "idCocktail";
@@ -34,14 +37,11 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private boolean isOnline = false;
     private boolean isEmpty = false;
     private int idDrink = 0;
-    int position = 0;
     private TextView instructions;
-    private TextView textView;
     private ImageView thumb;
-
-
     private Cocktail cocktail;
     private Bitmap thumbBm;
+    CollapsingToolbarLayout collaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +50,17 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
         int defaultValue = 0;
-        setContentView(R.layout.activity_detail);
-        textView = (TextView) findViewById(R.id.textView);
+        setContentView(R.layout.new_activity_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_detail);
+        setSupportActionBar(toolbar);
         instructions = (TextView) findViewById(R.id.textView1);
-        thumb = (ImageView) findViewById(R.id.cocktail_thumb);
+        thumb = (ImageView) findViewById(R.id.toolbarImage);
+        collaps = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
@@ -83,7 +90,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     private void render() {
-        textView.setText(cocktail.getName());
+        collaps.setTitle(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
         ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
         if (!ingredients.isEmpty()) {
@@ -145,7 +152,15 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     @Override
     public void onDataUpdateFail() {
-        Toast.makeText(this, "Can't download data", Toast.LENGTH_SHORT).show();
+        Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.action, snackbarOnClickListener).show();
     }
+
+    View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            recreate();
+        }
+    };
 
 }

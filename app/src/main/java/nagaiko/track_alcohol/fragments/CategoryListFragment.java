@@ -64,19 +64,7 @@ public class CategoryListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-//        data = dataStorage.getCocktailsByCategory("Ordinary Drink");
-        DBHelper db = new DBHelper(this.getActivity());
-        categories = db.getCategories().toArray(new String[db.getCategories().size()]);
-
-//        categories = new String[]{"Ordinary Drink", "Cocktail", "Milk / Float / Shake",
-//            "Other/Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur",
-//            "Punch / Party Drink", "Beer", "Soft Drink / Soda"};
-
-//        data = db.getCategories();
-//        categories = new String[data.size()];
-//        for (int i=0; i<data.size(); i++) {
-//            categories[i] = data.get(i);
-//        }
+        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -104,23 +92,9 @@ public class CategoryListFragment extends Fragment implements
         args.putString("category", categories[position]);
         cocktailListFragment.setArguments(args);
         fragmentTransaction = getFragmentManager().beginTransaction();
-//        if (((ListActivity) getActivity()).isNetworkAvailable()) { // || db.getCocktailsByCategory(categories[position]) !=null) {
-            fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
-//        } else {
-//            Toast.makeText(getActivity(), "NO INTERNET", Toast.LENGTH_SHORT).show();
-//        }
+        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
-//        Toast.makeText(getActivity(), data.get(position).getName(), Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(getActivity(), DetailActivity.class);
-//        intent.putExtra(ID_COCKTAIL, data.get(position).getId());
-
-//        Toast.makeText(getActivity(), names[position], Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(getActivity(), DetailActivity.class);
-//        intent.putExtra(ID_COCKTAIL, ids[position]);
-//
-//        startActivity(intent);
     }
 
 }
