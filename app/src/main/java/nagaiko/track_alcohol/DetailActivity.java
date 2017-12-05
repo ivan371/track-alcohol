@@ -2,6 +2,7 @@ package nagaiko.track_alcohol;
 
 import android.graphics.Bitmap;
 
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -37,12 +38,10 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private boolean isEmpty = false;
     private int idDrink = 0;
     private TextView instructions;
-    private TextView textView;
     private ImageView thumb;
-
-
     private Cocktail cocktail;
     private Bitmap thumbBm;
+    CollapsingToolbarLayout collaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +53,9 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         setContentView(R.layout.new_activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_detail);
         setSupportActionBar(toolbar);
-        //textView = (TextView) findViewById(R.id.textView);
         instructions = (TextView) findViewById(R.id.textView1);
         thumb = (ImageView) findViewById(R.id.toolbarImage);
-
+        collaps = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -92,7 +90,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     private void render() {
-        //textView.setText(cocktail.getName());
+        collaps.setTitle(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
         ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
         if (!ingredients.isEmpty()) {
