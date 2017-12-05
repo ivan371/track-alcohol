@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import nagaiko.track_alcohol.fragments.ErrorFragment;
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
 
 public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {

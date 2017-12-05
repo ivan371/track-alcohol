@@ -1,14 +1,21 @@
 package nagaiko.track_alcohol;
 
 import android.graphics.Bitmap;
+
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -44,10 +51,18 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
         int defaultValue = 0;
-        setContentView(R.layout.activity_detail);
-        textView = (TextView) findViewById(R.id.textView);
+        setContentView(R.layout.new_activity_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_detail);
+        setSupportActionBar(toolbar);
+        //textView = (TextView) findViewById(R.id.textView);
         instructions = (TextView) findViewById(R.id.textView1);
-        thumb = (ImageView) findViewById(R.id.cocktail_thumb);
+        thumb = (ImageView) findViewById(R.id.toolbarImage);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
         idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
@@ -77,7 +92,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     private void render() {
-        textView.setText(cocktail.getName());
+        //textView.setText(cocktail.getName());
         instructions.setText(cocktail.getInstruction());
         ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
         if (!ingredients.isEmpty()) {
