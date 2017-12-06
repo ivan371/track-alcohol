@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/coctail"
-            android:title="Ordinary Drink" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/coctail"
-            android:title="Coctail" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/coctail"
-            android:title="Milk/Float/Shake" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/coctail"
-            android:title="Other/Unknown" />
+
     </group>
 </menu>
