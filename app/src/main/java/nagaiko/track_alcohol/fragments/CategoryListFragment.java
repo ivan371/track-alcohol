@@ -6,15 +6,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-//import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.DBHelper;
-import nagaiko.track_alcohol.ListActivity;
 import nagaiko.track_alcohol.R;
 import nagaiko.track_alcohol.recyclerview.ClickCategoryListAdapter;
 import nagaiko.track_alcohol.DataStorage;
@@ -28,6 +26,7 @@ public class CategoryListFragment extends Fragment implements
     public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
+    Toolbar toolbar;
 
     int currentVisiblePosition = 0;
     private static final String VISIBLE_POSITION = "position";
@@ -89,8 +88,7 @@ public class CategoryListFragment extends Fragment implements
 
         DBHelper db = new DBHelper(this.getActivity());
         Bundle args = new Bundle();
-        args.putString("category", categories[position]);
-        cocktailListFragment.setArguments(args);
+        cocktailListFragment.setCategory(categories[position]);
         fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
         fragmentTransaction.addToBackStack(null);
