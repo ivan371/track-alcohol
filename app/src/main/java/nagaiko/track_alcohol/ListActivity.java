@@ -59,13 +59,9 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
 
         int size = categories.length;
         MenuItem mi;
-        Menu menu;
-        menu = navigationView.getMenu();
+        Menu menu = navigationView.getMenu();
         for(int i = 0; i < size; i++) {
-            menu.add(categories[i]);
-            mi = menu.getItem(menu.size() - 1);
-            mi.setTitle(mi.getTitle());
-            mi.setIcon(R.drawable.coctail);
+            menu.add(categories[i]).setIcon(R.drawable.coctail);
         }
 
         if (savedInstanceState == null) {
