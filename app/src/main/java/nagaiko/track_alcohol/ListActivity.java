@@ -1,12 +1,14 @@
 package nagaiko.track_alcohol;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -19,14 +21,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
+import nagaiko.track_alcohol.fragments.CocktailListFragment;
 
 public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
     private Fragment fragment;
+    private CocktailListFragment cocktailListFragment;
 
     private DataStorage dataStorage;
+    private String[] categories;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,7 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_activity);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -43,8 +49,24 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
+
+        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+
+        int size = categories.length;
+        MenuItem mi;
+        Menu menu;
+        for(int i = 0; i < size; i++) {
+            menu = navigationView.getMenu();
+            menu.add(categories[i]);
+            mi = menu.getItem(menu.size() - 1);
+            mi.setTitle(mi.getTitle());
+            mi.setIcon(R.drawable.coctail);
+        }
 
         if (savedInstanceState == null) {
             fragment = new CategoryListFragment();
@@ -100,18 +122,25 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        String category = item.getTitle().toString();
+        changeFragment(category);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return false;
+    }
+    private void changeFragment(String category) {
+        final FragmentManager fm = getSupportFragmentManager();
+        Bundle args = new Bundle();
+        cocktailListFragment = new CocktailListFragment();
+        toolbar.setTitle(category);
+        cocktailListFragment.setCategory(category);
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

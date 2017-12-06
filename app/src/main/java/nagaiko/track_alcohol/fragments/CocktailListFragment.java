@@ -52,9 +52,12 @@ public class CocktailListFragment extends Fragment implements
             Log.d(TAG, Integer.toString(currentVisiblePosition));
             currentVisiblePosition = savedInstanceState.getInt(VISIBLE_POSITION);
         }
-        category = getArguments().getString("category");
         dataStorage.subscribe(this);
 
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
