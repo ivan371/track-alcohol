@@ -24,8 +24,8 @@ public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRe
         private TextView ingredientTextView;
         private IngredientViewHolder(View itemView) {
             super(itemView);
-            measureTextView = itemView.findViewById(R.id.measure);
-            ingredientTextView = itemView.findViewById(R.id.ingredient);
+            measureTextView = itemView.findViewById(R.id.ingredient_measure);
+            ingredientTextView = itemView.findViewById(R.id.ingredient_name);
         }
     }
     private Context mContext;
@@ -40,7 +40,7 @@ public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRe
     public IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View ingredientView = inflater.inflate(R.layout.item_ingredient_layout, parent, false);
+        View ingredientView = inflater.inflate(R.layout.ingredient_card, parent, false);
         IngredientViewHolder viewHolder = new IngredientViewHolder(ingredientView);
         return viewHolder;
     }
