@@ -53,9 +53,9 @@ class ScheduledService extends IntentService {
 
         Notification notification = builder.build();
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFY_ID, notification);
-        context.startService(intent);
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        notificationManager.notify(NOTIFY_ID, notification);
+//        context.startService(intent);
     }
 
     @Override
