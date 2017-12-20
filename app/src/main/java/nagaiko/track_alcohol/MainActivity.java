@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         JobScheduler scheduler = (JobScheduler) getApplicationContext().getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.schedule(jobInfo);
     }
-    
+
     private void goToNextActivity() {
         if (isOnline) {
             Intent intent = new Intent(this, ListActivity.class);

@@ -27,8 +27,6 @@ public class NotificationJobService extends JobService {
     private static final int NOTIFY_ID = 101;
     @Override
     public boolean onStartJob(JobParameters params) {
-        ScheduledService.startScheduledJob(getApplicationContext(),
-                String.format(MESSAGE, params.getJobId()));
         setNotify();
         return false;
 
