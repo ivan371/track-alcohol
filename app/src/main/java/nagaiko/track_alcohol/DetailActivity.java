@@ -82,7 +82,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             isEmpty = true;
             render();
         }
-        setNotify();
+//        setNotify();
     }
 
     public void setNotify() {

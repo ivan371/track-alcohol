@@ -40,10 +40,7 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
     private boolean isFinish = false;
     private boolean isOnline = false;
     private DataStorage dataStorage = null;
-    JobScheduler jobScheduler;
-    private static final int MYJOBID = 1;
-    Chronometer chronometer;
-    private static final int NOTIFY_ID = 101;
+    private static final long REFRESH_INTERVAL  = 20 * 1000;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -60,35 +57,21 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         if (dataStorage.getCategories().size() != 0) {
             goToNextActivity();
         }
-        final ScheduleJobClickListener scheduleJobClickListener = new ScheduleJobClickListener(this);
-        new CountDownTimer(300000000, 10000) {
-            public void onTick(long millisUntilFinished) {
-                scheduleJobClickListener.execute();
-            }
-            public void onFinish() {
-            }
-        }.start();
-    }
-
-    static class ScheduleJobClickListener {
-        private final Context context;
-        ScheduleJobClickListener(Context context) {
-            this.context = context;
+        ComponentName componentName = new ComponentName(getApplicationContext(), NotificationJobService.class);
+        JobInfo jobInfo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            jobInfo = new JobInfo.Builder(1, componentName)
+                    .setMinimumLatency(REFRESH_INTERVAL)
+                    .build();
+        } else {
+            jobInfo = new JobInfo.Builder(1, componentName)
+                    .setPeriodic(REFRESH_INTERVAL)
+                    .build();
         }
-
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        public void execute() {
-            ComponentName serviceComponent = new ComponentName(context, NotificationJobService.class);
-            int id = (int) System.currentTimeMillis();
-            JobInfo.Builder infoBuilder = new JobInfo.Builder(id, serviceComponent);
-            infoBuilder.setMinimumLatency(1000)
-                    .setOverrideDeadline(2 * 1000);
-            JobInfo info = infoBuilder.build();
-            JobScheduler scheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
-            scheduler.schedule(info);
-        }
+        JobScheduler scheduler = (JobScheduler) getApplicationContext().getSystemService(JOB_SCHEDULER_SERVICE);
+        scheduler.schedule(jobInfo);
     }
-
+    
     private void goToNextActivity() {
         if (isOnline) {
             Intent intent = new Intent(this, ListActivity.class);

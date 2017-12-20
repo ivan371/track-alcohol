@@ -21,7 +21,7 @@ import nagaiko.track_alcohol.R;
  * Created by nagai on 18.12.2017.
  */
 
-class ScheduledService extends IntentService {
+public class ScheduledService extends IntentService {
     private static final String EXTRA_MESSAGE = "extra_message";
     private static final String ACTION = "scheduled_action";
     private static final int NOTIFY_ID = 101;
@@ -34,28 +34,7 @@ class ScheduledService extends IntentService {
         Intent intent = new Intent(context, ScheduledService.class);
         intent.setAction(ACTION);
         intent.putExtra(EXTRA_MESSAGE, message);
-        Intent notificationIntent = new Intent(context, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(context,
-                0, notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Resources res = context.getResources();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        builder.setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.coctail)
-                .setContentTitle("Го бухать!")
-                .setContentText("Ты давно не бухал")
-                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.coctail))
-                .setTicker("Твои друзья на НК, а ты нет")
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true);
-
-        Notification notification = builder.build();
-
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        notificationManager.notify(NOTIFY_ID, notification);
-//        context.startService(intent);
+        context.startService(intent);
     }
 
     @Override
