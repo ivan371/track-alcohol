@@ -7,6 +7,6 @@ import okhttp3.HttpUrl;
  */
 
 public interface IRequest {
-    public HttpUrl getHttpUrl();
-    public Class getResponseClass();
+    HttpUrl getHttpUrl();
+    Class getResponseClass();
 }

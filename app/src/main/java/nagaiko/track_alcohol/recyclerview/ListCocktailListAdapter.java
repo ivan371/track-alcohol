@@ -24,12 +24,10 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
     private final WeakReference<LayoutInflater> mInflater;
     protected ArrayList<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
-//    public final String[] ingredient;
 
     public ListCocktailListAdapter(LayoutInflater inflater, ArrayList<Cocktail> data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
-//        this.ingredient = ingredient;
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
@@ -42,18 +40,15 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
                 img.setImageBitmap(thumb);
             }
         }
-//    public void setIngredient(String text){ingredient.setText("Ingredient: " + text + ",...");}
 
         private TextView name;
         private ImageView img;
-//    private TextView ingredient;
 
         public ListViewHolder(View itemView) {
             super(itemView);
 
-            name = (TextView)itemView.findViewById(R.id.name);
-            img = (ImageView)itemView.findViewById(R.id.coctail);
-//        ingredient = (TextView)itemView.findViewById(R.id.ingredient);
+            name = itemView.findViewById(R.id.name);
+            img = itemView.findViewById(R.id.coctail);
         }
 
     }
@@ -74,7 +69,6 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
         holder.setName(data.get(position).getName());
         int id = data.get(position).getId();
         holder.setImg(dataStorage.getCocktailThumb(id));
-//        holder.setIngredient(ingredient[position]);
     }
 
     @Override

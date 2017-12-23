@@ -1,11 +1,7 @@
 package nagaiko.track_alcohol.api;
 
-import android.content.Context;
-
 import java.security.InvalidParameterException;
 
-import nagaiko.track_alcohol.R;
-import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.services.IRequest;
 import nagaiko.track_alcohol.services.IRequestBuilder;
 import okhttp3.HttpUrl;

@@ -3,17 +3,14 @@ package nagaiko.track_alcohol;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import nagaiko.track_alcohol.api.BaseApiAsyncTask;
 import nagaiko.track_alcohol.api.GetCategoriesAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailByIdAsyncTask;
 import nagaiko.track_alcohol.api.GetCocktailThumbAsyncTask;
@@ -21,7 +18,6 @@ import nagaiko.track_alcohol.api.GetCocktailsInCategoryAsyncTask;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
-import nagaiko.track_alcohol.services.IRequest;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.CATEGORIES_LIST;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;

@@ -9,7 +9,6 @@ import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.services.IRequest;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.CATEGORIES_LIST;
-import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_LIST;
 
 /**
  * Created by altair on 15.11.17.

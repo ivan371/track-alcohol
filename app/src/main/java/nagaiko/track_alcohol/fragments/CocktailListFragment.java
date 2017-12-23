@@ -38,7 +38,6 @@ public class CocktailListFragment extends Fragment implements
     private static final String ID_COCKTAIL = "idCocktail";
 
     ArrayList<Cocktail> data;
-    private static String[] ingredient;
     private DataStorage dataStorage = DataStorage.getInstance();
     private FragmentTransaction fragmentTransaction;
     private ClickCocktailListAdapter recyclerAdapter;
@@ -53,9 +52,12 @@ public class CocktailListFragment extends Fragment implements
             Log.d(TAG, Integer.toString(currentVisiblePosition));
             currentVisiblePosition = savedInstanceState.getInt(VISIBLE_POSITION);
         }
-        category = getArguments().getString("category");
         dataStorage.subscribe(this);
 
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override
