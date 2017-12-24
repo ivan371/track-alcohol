@@ -20,6 +20,7 @@ import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.DetailActivity;
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 
@@ -28,7 +29,7 @@ import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
  */
 
 public class CocktailListFragment extends Fragment implements
-        ClickCocktailListAdapter.OnItemClickListener, DataStorage.Subscriber{
+        ClickCocktailListAdapter.OnItemClickListener, DataStorage.ApiDataSubscriber{
     public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -52,7 +53,7 @@ public class CocktailListFragment extends Fragment implements
             Log.d(TAG, Integer.toString(currentVisiblePosition));
             currentVisiblePosition = savedInstanceState.getInt(VISIBLE_POSITION);
         }
-        dataStorage.subscribe(this);
+        //dataStorage.subscribe(this);
 
     }
 
@@ -73,7 +74,7 @@ public class CocktailListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        data = dataStorage.getCocktailsByCategory(category);
+        dataStorage.getCocktailsByCategory(this, category);
 
         recyclerAdapter = new ClickCocktailListAdapter(getActivity().getLayoutInflater(), data, this);
         recyclerView.setAdapter(recyclerAdapter);
@@ -96,7 +97,7 @@ public class CocktailListFragment extends Fragment implements
 
     @Override
     public void onStop() {
-        dataStorage.unsubscribe(this);
+        //dataStorage.unsubscribe(this);
         super.onStop();
     }
 
@@ -110,18 +111,29 @@ public class CocktailListFragment extends Fragment implements
     }
 
     @Override
-    public void onDataUpdated(int dataType) {
-        fragmentTransaction = getFragmentManager().beginTransaction();
-        data = dataStorage.getCocktailsByCategory(category);
-        fragmentTransaction.detach(this).attach(this).commit();
+    public void onDataLoaded(int type, Response response) {
+        data = (ArrayList<Cocktail>) response.content;
     }
 
     @Override
-    public void onDataUpdateFail() {
+    public void onDataLoadFailed() {
         Snackbar.make(this.getView(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
         .setAction(R.string.action, snackbarOnClickListener).show();
     }
 
+//    @Override
+//    public void onDataUpdated(int dataType) {
+//        fragmentTransaction = getFragmentManager().beginTransaction();
+//        data = dataStorage.getCocktailsByCategory(category);
+//        fragmentTransaction.detach(this).attach(this).commit();
+//    }
+//
+//    @Override
+//    public void onDataUpdateFail() {
+//        Snackbar.make(this.getView(), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+//        .setAction(R.string.action, snackbarOnClickListener).show();
+//    }
+//
     CocktailListFragment cocktailListFragment = this;
     View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
         @Override

@@ -20,10 +20,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.fragments.CocktailListFragment;
 
-public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DataStorage.ApiDataSubscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -55,7 +56,9 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
-        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+        //categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+        dataStorage.getCategories(this);
+
 
         int size = categories.length;
         MenuItem mi;
@@ -145,4 +148,13 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        categories = (String[]) response.content;
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+
+    }
 }

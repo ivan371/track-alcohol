@@ -29,13 +29,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_INFO;
 import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
 
-public class DetailActivity extends AppCompatActivity implements DataStorage.Subscriber {
+public class DetailActivity extends AppCompatActivity implements DataStorage.ApiDataSubscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private DataStorage dataStorage;
@@ -74,42 +75,16 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             isEmpty = savedInstanceState.getBoolean(IS_COCKTAIL_EMPRY);
         }
 
-        dataStorage.subscribe(this);
-        cocktail = dataStorage.getCocktailById(idDrink);
-        thumbBm = dataStorage.getCocktailThumb(idDrink);
+        //dataStorage.subscribe(this);
+        dataStorage.getCocktailById(this, idDrink);
+//        cocktail = dataStorage.getCocktailById(idDrink);
+//        thumbBm = dataStorage.getCocktailThumb(idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
             render();
         }
-//        setNotify();
     }
-
-    public void setNotify() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                0, notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Resources res = this.getResources();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        builder.setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.coctail)
-                .setContentTitle("Го бухать!")
-                .setContentText("Ты давно не бухал")
-                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.coctail))
-                .setTicker("Твои друзья на НК, а ты нет")
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true);
-
-        Notification notification = builder.build();
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFY_ID, notification);
-    }
-
 
     private void setCocktail(Cocktail cocktail) {
         this.cocktail = cocktail;
@@ -168,20 +143,20 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     @Override
     protected void onDestroy() {
-        dataStorage.unsubscribe(this);
+//        dataStorage.unsubscribe(this);
         super.onDestroy();
     }
 
-    @Override
-    public void onDataUpdated(int dataType) {
-        Log.d(LOG_TAG, "onDataUpdated:" + dataType);
-        if (dataType == COCKTAIL_INFO) {
-            setCocktail(dataStorage.getCocktailById(idDrink));
-        } else if (dataType == COCKTAIL_THUMB) {
-            setThumb(dataStorage.getCocktailThumb(idDrink));
-            render();
-        }
-    }
+//    @Override
+//    public void onDataUpdated(int dataType) {
+//        Log.d(LOG_TAG, "onDataUpdated:" + dataType);
+//        if (dataType == COCKTAIL_INFO) {
+//            //setCocktail(dataStorage.getCocktailById(idDrink));
+//        } else if (dataType == COCKTAIL_THUMB) {
+//            //setThumb(dataStorage.getCocktailThumb(idDrink));
+//            render();
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -194,11 +169,11 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         }
     }
 
-    @Override
-    public void onDataUpdateFail() {
-        Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.action, snackbarOnClickListener).show();
-    }
+//    @Override
+//    public void onDataUpdateFail() {
+//        Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+//                .setAction(R.string.action, snackbarOnClickListener).show();
+//    }
 
     View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
         @Override
@@ -207,4 +182,20 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         }
     };
 
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        Log.d(LOG_TAG, "onDataUpdated:" + type);
+        if (type == COCKTAIL_INFO) {
+            cocktail = (Cocktail) response.content;
+        } else if (type == COCKTAIL_THUMB) {
+            thumb = (ImageView) response.content;
+            render();
+        }
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+        Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.action, snackbarOnClickListener).show();
+    }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.recyclerview.ClickCategoryListAdapter;
 import nagaiko.track_alcohol.DataStorage;
 
@@ -22,7 +23,7 @@ import nagaiko.track_alcohol.DataStorage;
  */
 
 public class CategoryListFragment extends Fragment implements
-        ClickCategoryListAdapter.OnItemClickListener{
+        ClickCategoryListAdapter.OnItemClickListener, DataStorage.ApiDataSubscriber{
     public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
@@ -62,8 +63,8 @@ public class CategoryListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
-
-        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+        dataStorage.getCategories(this);
+        //categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -95,4 +96,13 @@ public class CategoryListFragment extends Fragment implements
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        categories = (String[]) response.content;
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+
+    }
 }

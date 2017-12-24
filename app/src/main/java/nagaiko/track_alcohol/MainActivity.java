@@ -25,13 +25,14 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.services.NotificationJobService;
 
 /**
  * Created by Konstantin on 23.10.2017.
  */
 
-public class MainActivity extends AppCompatActivity implements DataStorage.Subscriber {
+public class MainActivity extends AppCompatActivity implements DataStorage.ApiDataSubscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
     private static final String DOWNLOAD_TAG = "downloader";
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
     private DataStorage dataStorage = null;
     private static final long REFRESH_INTERVAL  = 20 * 1000;
 
+    String[] categories;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void onCreate(final Bundle savedInstanceState) {
@@ -53,8 +55,9 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
-        dataStorage.subscribe(this);
-        if (dataStorage.getCategories().size() != 0) {
+        //dataStorage.subscribe(this);
+        dataStorage.getCategories(this);
+        if (categories.length != 0) {
             goToNextActivity();
         }
         ComponentName componentName = new ComponentName(getApplicationContext(), NotificationJobService.class);
@@ -110,21 +113,21 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
 
     @Override
     protected void onStop() {
-        dataStorage.unsubscribe(this);
+       // dataStorage.unsubscribe(this);
         super.onStop();
     }
 
-    @Override
-    public void onDataUpdated(int dataType) {
-        Log.d(LOG_TAG, "onDataUpdated");
-        goToNextActivity();
-    }
-
-    @Override
-    public void onDataUpdateFail() {
-        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.action, snackbarOnClickListener).show();
-    }
+//    @Override
+//    public void onDataUpdated(int dataType) {
+//        Log.d(LOG_TAG, "onDataUpdated");
+//        goToNextActivity();
+//    }
+//
+//    @Override
+//    public void onDataUpdateFail() {
+//        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+//                .setAction(R.string.action, snackbarOnClickListener).show();
+//    }
 
     View.OnClickListener snackbarOnClickListener = new View.OnClickListener() {
         @Override
@@ -132,4 +135,15 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
             recreate();
         }
     };
+
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        //categories = (String[]) response.content;
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+        Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.action, snackbarOnClickListener).show();
+    }
 }

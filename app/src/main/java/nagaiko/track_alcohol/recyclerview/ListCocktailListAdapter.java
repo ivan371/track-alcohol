@@ -68,7 +68,7 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
     public void onBindViewHolder(ListViewHolder holder, int position) {
         holder.setName(data.get(position).getName());
         int id = data.get(position).getId();
-        holder.setImg(dataStorage.getCocktailThumb(id));
+        //holder.setImg(dataStorage.getCocktailThumb(id));
     }
 
     @Override
