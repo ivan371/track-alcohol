@@ -19,6 +19,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.fragments.CocktailListFragment;
@@ -97,7 +100,6 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop(){
         super.onStop();
-
         Log.d(LOG_TAG, "onStop");
     }
 

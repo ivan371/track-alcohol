@@ -1,0 +1,10 @@
+<!-- res/transition/change_image_transform.xml -->
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <autoTransition/>
+    <!--<alpha-->
+        <!--android:duration="10"-->
+        <!--android:fromAlpha="1.0"-->
+        <!--android:startOffset="0"-->
+        <!--android:toAlpha="1.0" >-->
+    <!--</alpha>-->
+</transitionSet>

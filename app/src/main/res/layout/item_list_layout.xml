@@ -16,6 +16,7 @@
         <nagaiko.track_alcohol.CircleImageView
             style="@style/ImageSimple"
             android:id="@+id/coctail"
+            android:transitionName="profile"
             android:src="@drawable/coctail2"
             android:layout_height="55dp"
             android:layout_width="55dp"
