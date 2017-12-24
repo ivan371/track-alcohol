@@ -62,9 +62,9 @@ public abstract class BaseApiAsyncTask<RequestParamsType, ResponseType>
     protected void onPostExecute(Response<ResponseType> response) {
         if (callbackOnTask != null) {
             if (response == null) {
-                callbackOnTask.onFailExecute();
+                callbackOnTask.onFailExecute(null);
             } else {
-                callbackOnTask.onPostExecute(response.type, response);
+                callbackOnTask.onPostExecute(null, response.type, response);
             }
         }
     }
