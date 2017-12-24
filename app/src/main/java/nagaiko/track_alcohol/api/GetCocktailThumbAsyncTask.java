@@ -130,9 +130,9 @@ public class    GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Respon
     protected void onPostExecute(Response<Pair<Integer, Bitmap>> response) {
         if (callbackOnTask != null) {
             if (response == null) {
-                callbackOnTask.onFailExecute();
+                callbackOnTask.onFailExecute(null);
             } else {
-                callbackOnTask.onPostExecute(response.type, response);
+                callbackOnTask.onPostExecute(null, response.type, response);
             }
         }
     }
