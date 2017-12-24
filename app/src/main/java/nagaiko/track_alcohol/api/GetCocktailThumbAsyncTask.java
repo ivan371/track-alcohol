@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.BundleCompat;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
@@ -22,7 +21,7 @@ import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
  * Created by altair on 14.11.17.
  */
 
-public class GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Response<Pair<Integer, Bitmap>>> {
+public class    GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Response<Pair<Integer, Bitmap>>> {
 
     public final static String COCKTAIL_ID_BUNDLE_KEY = "COCKTAIL_ID_BUNDLE_KEY";
     public final static String URL_BUNDLE_KEY = "URL_BUNDLE_KEY";
@@ -131,9 +130,9 @@ public class GetCocktailThumbAsyncTask extends AsyncTask<Bundle, Void, Response<
     protected void onPostExecute(Response<Pair<Integer, Bitmap>> response) {
         if (callbackOnTask != null) {
             if (response == null) {
-                callbackOnTask.onFailExecute();
+                callbackOnTask.onFailExecute(null);
             } else {
-                callbackOnTask.onPostExecute(response.type, response);
+                callbackOnTask.onPostExecute(null, response.type, response);
             }
         }
     }
