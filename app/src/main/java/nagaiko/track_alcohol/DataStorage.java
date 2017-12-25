@@ -3,9 +3,11 @@ package nagaiko.track_alcohol;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.Map;
 import nagaiko.track_alcohol.api.ApiDataDownloader;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.ImageDownloader;
+import nagaiko.track_alcohol.api.ImageResponse;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.api.commands.ApiTask;
 import nagaiko.track_alcohol.api.commands.BaseHandlerTask;
@@ -34,12 +37,12 @@ import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
  * Created by altair on 24.10.17.
  */
 
-public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOnTask {
+public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOnTask, ImageDownloader.ImageDownloaderListener<ImageView> {
     private static DataStorage _instance = null;
 
-    public synchronized static DataStorage getInstanceOrCreate(Context context) {
+    public synchronized static DataStorage getInstanceOrCreate(Context context, Handler uiHandler) {
         if (_instance == null) {
-            _instance = new DataStorage(context);
+            _instance = new DataStorage(context, uiHandler);
             _instance.initDownloaders();
         }
         return _instance;
@@ -58,28 +61,32 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
     public static final int COCKTAIL_FILTERED_LIST = 0;
 
     private DBHelper dbHelper;
+    private Handler uiHandler;
     private DBHandlerThread dbHandlerThread;
     private ApiDataDownloader apiDataDownloader;
+    private ImageDownloader<ImageView> imageDownloader;
+
     private File cacheDir;
     private int imageSize;
-    private LruCache<Integer, Bitmap> _imageCache;
+    private LruCache<String, Bitmap> _imageCache;
     private String apiKey;
 
     private Map<BaseHandlerTask, List<Subscriber>> commandSubscriberMap;
 
-    private Map<Integer, List<ImageDownloader.ImageDownloaderListener>> imageIdImageViewListener;
-//    private Map<ImageView, >
+//    private Map<Integer, List<ImageDownloader.ImageDownloaderListener>> imageIdImageViewListener;
+    private Map<ImageView, String> imageViewUrlMap;
+    private Map<ImageView, Subscriber> imageViewSubscriberMap;
 
-    private DataStorage(Context context) {
+    private DataStorage(Context context, Handler uiHandler) {
         dbHelper = new DBHelper(context);
         cacheDir = context.getCacheDir();
         imageSize = updateImageSize(context.getResources().getDisplayMetrics());
-
+        this.uiHandler = uiHandler;
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-        _imageCache = new LruCache<Integer, Bitmap>(cacheSize) {
+        _imageCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
-            protected int sizeOf(Integer key, Bitmap bitmap) {
+            protected int sizeOf(String key, Bitmap bitmap) {
                 return bitmap.getRowBytes() * bitmap.getHeight() / 1024;
             }
         };
@@ -88,6 +95,8 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
 //        subscribers = new ArrayList<>();
 
         commandSubscriberMap = new HashMap<>();
+        imageViewUrlMap = new HashMap<>();
+        imageViewSubscriberMap = new HashMap<>();
     }
 
     private void initDownloaders() {
@@ -98,6 +107,11 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         dbHandlerThread = new DBHandlerThread("DB Helper Thread", dbHelper, this);
         dbHandlerThread.start();
         dbHandlerThread.prepareHandler();
+
+        imageDownloader = new ImageDownloader<ImageView>("Image downloader", cacheDir, imageSize, this, imageViewUrlMap);
+        imageDownloader.start();
+        imageDownloader.prepareHandler();
+
     }
 
     private static int updateImageSize(DisplayMetrics dm) {
@@ -115,7 +129,15 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         if (!commandSubscriberMap.containsKey(task)) {
             commandSubscriberMap.put(task, new ArrayList<Subscriber>());
         }
-        commandSubscriberMap.get(task).add(subscriber);
+        List<Subscriber> subscribers = commandSubscriberMap.get(task);
+        if(!subscribers.contains(subscriber)) {
+            subscribers.add(subscriber);
+        }
+    }
+
+    private void addImageSubscriber(ImageView imageView, Subscriber subscriber, String url) {
+        imageViewSubscriberMap.put(imageView, subscriber);
+        imageViewUrlMap.put(imageView, url);
     }
 
     private void moveSubscribers(BaseHandlerTask from, BaseHandlerTask to) {
@@ -140,19 +162,15 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         addSubscriber(dbTask, subscriber);
         dbHandlerThread.addTask(dbTask);
     }
-//
-//    public Bitmap getCocktailThumb(int id) {
-//        Bitmap bm = _imageCache.get(id);
-//        if (bm == null) {
-//            Cocktail cocktail = getCocktailById(id);
-//            if (cocktail != null) {
-//                GetCocktailThumbAsyncTask task = getCocktailThumbAsyncTask();
-//                Bundle bundle = GetCocktailThumbAsyncTask.GetParametersBunble(id, cocktail.getThumb());
-//                task.execute(bundle);
-//            }
-//        }
-//        return bm;
-//    }
+
+    public Bitmap getCocktailThumb(Subscriber subscriber, String url, ImageView target) {
+        Bitmap bm = _imageCache.get(url);
+        if (bm == null) {
+            addImageSubscriber(target, subscriber, url);
+            imageDownloader.addTask(target);
+        }
+        return bm;
+    }
 
 //    public boolean subscribe(Subscriber subscriber) {
 //        return subscribers.add(subscriber);
@@ -163,6 +181,20 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
             BaseHandlerTask task = entry.getKey();
             List<Subscriber> subsList = entry.getValue();
             subsList.remove(subscriber);
+        }
+    }
+
+    public void unsubscribeImage(ImageView imageView) {
+        imageViewSubscriberMap.remove(imageView);
+        imageViewUrlMap.remove(imageView);
+    }
+
+    public void unsubscribeImage(Subscriber subscriber) {
+        for (Map.Entry<ImageView, Subscriber> entry: imageViewSubscriberMap.entrySet()) {
+            if (subscriber.equals(entry.getValue())) {
+                imageViewUrlMap.remove(entry.getKey());
+                imageViewSubscriberMap.remove(entry.getKey());
+            }
         }
     }
 
@@ -205,15 +237,15 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
                     dataUpdated = true;
                 }
                 break;
-            case COCKTAIL_THUMB:
-                Pair<Integer, Bitmap> idWithBm = (Pair<Integer, Bitmap>) response.content;
-                if (idWithBm != null) {
-                    int cocktailId = idWithBm.first;
-                    Bitmap bm = idWithBm.second;
-                    _imageCache.put(cocktailId, bm);
-                    dataUpdated = true;
-                }
-                break;
+//            case COCKTAIL_THUMB:
+//                Pair<Integer, Bitmap> idWithBm = (Pair<Integer, Bitmap>) response.content;
+//                if (idWithBm != null) {
+//                    int cocktailId = idWithBm.first;
+//                    Bitmap bm = idWithBm.second;
+//                    _imageCache.put(cocktailId, bm);
+//                    dataUpdated = true;
+//                }
+//                break;
         }
         if (dataUpdated) {
             notifySubscribers(task, type, response);
@@ -237,6 +269,27 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         ApiTask remoteTask = task.getRemoteTask();
         moveSubscribers(task, remoteTask);
         apiDataDownloader.addTask(remoteTask);
+    }
+
+    @Override
+    public void onImageLoaded(final ImageView target, String url, Bitmap bitmap) {
+        _imageCache.put(url, bitmap);
+        final Response<ImageResponse> response = new Response<>(COCKTAIL_THUMB, new ImageResponse(
+                target, url, bitmap
+        ));
+
+        uiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Subscriber subscriber = imageViewSubscriberMap.get(target);
+                subscriber.onDataLoaded(response.type, response);
+            }
+        });
+    }
+
+    @Override
+    public void onImageLoadFailed(ImageView imageView, String url) {
+
     }
 
 }

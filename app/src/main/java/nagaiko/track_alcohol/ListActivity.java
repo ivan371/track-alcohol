@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -61,7 +62,7 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         final FragmentManager fm = getSupportFragmentManager();
-        dataStorage = DataStorage.getInstanceOrCreate(this);
+        dataStorage = DataStorage.getInstanceOrCreate(this, new Handler(getMainLooper()));
         dataStorage.getCategories(this);
 //        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 

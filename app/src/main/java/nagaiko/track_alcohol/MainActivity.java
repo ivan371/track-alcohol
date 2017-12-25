@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataStorage = DataStorage.getInstanceOrCreate(this);
+        dataStorage = DataStorage.getInstanceOrCreate(this, new Handler(getMainLooper()));
 
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);

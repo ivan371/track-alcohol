@@ -9,6 +9,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nagaiko.track_alcohol.api.ImageResponse;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
@@ -58,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataStorage = DataStorage.getInstanceOrCreate(this);
+        dataStorage = DataStorage.getInstanceOrCreate(this, new Handler(getMainLooper()));
 
         int defaultValue = 0;
         setContentView(R.layout.new_activity_detail);
@@ -77,7 +80,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
 //        dataStorage.subscribe(this);
         dataStorage.getCocktailById(this, idDrink);
-//        thumbBm = dataStorage.getCocktailThumb(idDrink);
+//        thumbBm = dataStorage.getCocktailThumb(this, idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
@@ -114,6 +117,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     private void setCocktail(Cocktail cocktail) {
         this.cocktail = cocktail;
+        this.thumbBm = dataStorage.getCocktailThumb(this, cocktail.getThumb(), thumb);
         render();
     }
 
@@ -185,8 +189,9 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
                               }
                           });
         } else if (dataType == COCKTAIL_THUMB) {
-//            setThumb(dataStorage.getCocktailThumb(idDrink));
-//            render();
+            ImageResponse imageResponse = (ImageResponse) response.content;
+            setThumb(imageResponse.bm);
+            render();
         }
     }
 
