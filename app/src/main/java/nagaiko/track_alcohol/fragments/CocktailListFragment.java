@@ -39,7 +39,7 @@ public class CocktailListFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-    List<Cocktail> data;
+    private List<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
     private FragmentTransaction fragmentTransaction;
     private ClickCocktailListAdapter recyclerAdapter;
@@ -114,7 +114,7 @@ public class CocktailListFragment extends Fragment implements
     @Override
     public void onDataLoaded(int dataType, final Response response) {
 //        fragmentTransaction = getFragmentManager().beginTransaction();
-        final List<Cocktail> data = (List<Cocktail>)response.content;
+        data = (List<Cocktail>)response.content;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

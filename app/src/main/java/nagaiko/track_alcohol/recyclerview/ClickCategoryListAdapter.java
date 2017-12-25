@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 /**
  * Created by Konstantin on 24.10.2017.
  */
@@ -15,7 +17,7 @@ public class ClickCategoryListAdapter extends ListCategoryListAdapter implements
 
     private final OnItemClickListener mClickListener;
 
-    public ClickCategoryListAdapter(LayoutInflater inflater, String[] data, OnItemClickListener listener) {
+    public ClickCategoryListAdapter(LayoutInflater inflater, List<String> data, OnItemClickListener listener) {
         super(inflater, data);
         mClickListener = listener;
     }

@@ -177,8 +177,13 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     public void onDataLoaded(int dataType, Response response) {
         Log.d(LOG_TAG, "onDataUpdated:" + dataType);
         if (dataType == COCKTAIL_INFO) {
-            Cocktail cocktailInfo = (Cocktail) response.content;
-            setCocktail(cocktailInfo);
+            final Cocktail cocktailInfo = (Cocktail) response.content;
+            runOnUiThread(new Runnable() {
+                              @Override
+                              public void run() {
+                                  setCocktail(cocktailInfo);
+                              }
+                          });
         } else if (dataType == COCKTAIL_THUMB) {
 //            setThumb(dataStorage.getCocktailThumb(idDrink));
 //            render();

@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.models.Cocktail;
 
 /**
  * Created by Konstantin on 24.10.2017.
@@ -17,9 +19,9 @@ import nagaiko.track_alcohol.R;
 public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryListAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
-    public final String[] data;
+    public List<String> data;
 
-    public ListCategoryListAdapter(LayoutInflater inflater, String[] data) {
+    public ListCategoryListAdapter(LayoutInflater inflater, List<String> data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
     }
@@ -53,17 +55,22 @@ public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryLi
 
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
-        holder.setName(data[position]);
+        holder.setName(data.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return data == null ? 0 : data.length;
+        return data == null ? 0 : data.size();
     }
 
 
     @Override
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
+    }
+
+    public void setNewData(List<String> categories) {
+        data = categories;
+        notifyDataSetChanged();
     }
 }

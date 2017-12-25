@@ -31,13 +31,6 @@ public class ApiDataDownloader extends HandlerThread {
         this.callbackOnTask = callbackOnTask;
     }
 
-    public ApiDataDownloader(String name, int priority, String apiKey, ICallbackOnTask callbackOnTask) {
-        super(name, priority);
-        this.apiKey = apiKey;
-        httpClient = new OkHttpClient();
-        this.callbackOnTask = callbackOnTask;
-    }
-
     public void prepareHandler() {
         downloadHandler = new Handler(getLooper()) {
             @Override

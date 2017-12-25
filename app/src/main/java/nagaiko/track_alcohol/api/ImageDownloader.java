@@ -16,10 +16,6 @@ public class ImageDownloader extends HandlerThread {
         super(name);
     }
 
-    public ImageDownloader(String name, int priority) {
-        super(name, priority);
-    }
-
     public interface ImageDownloaderListener {
         void onImageDownloaded(String url, Bitmap image);
     }

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import nagaiko.track_alcohol.api.ApiDataDownloader;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
+import nagaiko.track_alcohol.api.ImageDownloader;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.api.commands.ApiTask;
 import nagaiko.track_alcohol.api.commands.BaseHandlerTask;
@@ -65,6 +66,9 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
     private String apiKey;
 
     private Map<BaseHandlerTask, List<Subscriber>> commandSubscriberMap;
+
+    private Map<Integer, List<ImageDownloader.ImageDownloaderListener>> imageIdImageViewListener;
+//    private Map<ImageView, >
 
     private DataStorage(Context context) {
         dbHelper = new DBHelper(context);
@@ -136,7 +140,7 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         addSubscriber(dbTask, subscriber);
         dbHandlerThread.addTask(dbTask);
     }
-
+//
 //    public Bitmap getCocktailThumb(int id) {
 //        Bitmap bm = _imageCache.get(id);
 //        if (bm == null) {
