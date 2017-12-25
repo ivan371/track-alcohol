@@ -14,7 +14,11 @@ import java.util.List;
 
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.api.ImageResponse;
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
+
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_THUMB;
 
 /**
  * Created by Konstantin on 24.10.2017.
@@ -31,7 +35,7 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
         this.data = data;
     }
 
-    public class ListViewHolder extends RecyclerView.ViewHolder {
+    public class ListViewHolder extends RecyclerView.ViewHolder implements DataStorage.Subscriber {
 
         public void setName(String text) {
             name.setText(text);
@@ -41,9 +45,13 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
                 img.setImageBitmap(thumb);
             }
         }
+        public void setUrl(String url) {
+            this.url = url;
+        }
 
         private TextView name;
-        private ImageView img;
+        public ImageView img;
+        private String url;
 
         public ListViewHolder(View itemView) {
             super(itemView);
@@ -52,6 +60,20 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
             img = itemView.findViewById(R.id.coctail);
         }
 
+        @Override
+        public void onDataLoaded(int type, Response response) {
+            if (type == COCKTAIL_THUMB) {
+                ImageResponse imageResponse = (ImageResponse)response.content;
+                if (this.url != null && this.url.equals(imageResponse.url)) {
+                    setImg(imageResponse.bm);
+                }
+            }
+        }
+
+        @Override
+        public void onDataLoadFailed() {
+
+        }
     }
 
     @Override
@@ -68,8 +90,9 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
         holder.setName(data.get(position).getName());
-        int id = data.get(position).getId();
-//        holder.setImg(dataStorage.getCocktailThumb(id));
+        String url = data.get(position).getThumb();
+        holder.setUrl(url);
+        holder.setImg(dataStorage.getCocktailThumb(holder, url, holder.img));
     }
 
     @Override

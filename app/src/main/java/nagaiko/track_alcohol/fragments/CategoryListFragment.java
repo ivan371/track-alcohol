@@ -12,20 +12,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import nagaiko.track_alcohol.DBHelper;
 import nagaiko.track_alcohol.R;
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.recyclerview.ClickCategoryListAdapter;
 import nagaiko.track_alcohol.DataStorage;
+
+import static nagaiko.track_alcohol.api.ApiResponseTypes.CATEGORIES_LIST;
 
 /**
  * Created by Konstantin on 24.10.2017.
  */
 
 public class CategoryListFragment extends Fragment implements
-        ClickCategoryListAdapter.OnItemClickListener{
+        ClickCategoryListAdapter.OnItemClickListener, DataStorage.Subscriber{
     public static final String TAG = CategoryListFragment.class.getSimpleName();
 
     private RecyclerView recyclerView;
+    private ClickCategoryListAdapter recyclerAdapter;
     Toolbar toolbar;
 
     int currentVisiblePosition = 0;
@@ -37,7 +43,7 @@ public class CategoryListFragment extends Fragment implements
     CocktailListFragment cocktailListFragment = new CocktailListFragment();
     FragmentTransaction fragmentTransaction;
 
-    private String[] categories;
+    private List<String> categories;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,8 +70,10 @@ public class CategoryListFragment extends Fragment implements
         recyclerView = new RecyclerView(getActivity());
 
 //        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+        dataStorage.getCategories(this);
 
-        recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
+        recyclerAdapter = new ClickCategoryListAdapter(getActivity().getLayoutInflater(), null, this);
+        recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         recyclerView.setHasFixedSize(true);
@@ -88,11 +96,29 @@ public class CategoryListFragment extends Fragment implements
 
         DBHelper db = new DBHelper(this.getActivity());
         Bundle args = new Bundle();
-        cocktailListFragment.setCategory(categories[position]);
+        cocktailListFragment.setCategory(categories.get(position));
         fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment, cocktailListFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        if (type == CATEGORIES_LIST) {
+            categories = (List<String>) response.content;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerAdapter.setNewData(categories);
+                }
+            });
+
+        }
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+
+    }
 }

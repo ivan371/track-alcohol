@@ -24,7 +24,11 @@ public class CocktailByIdDBTask extends DBTask {
 
     @Override
     public Response<Cocktail> execute(DBHelper dbHelper) {
-        return new Response<Cocktail>(getMessageType(), dbHelper.getCocktailById(cocktailID));
+        Cocktail cocktail = dbHelper.getCocktailById(cocktailID);
+        if (cocktail != null && cocktail.isFull()) {
+            return new Response<Cocktail>(getMessageType(), cocktail);
+        }
+        return null;
     }
 
     @Override

@@ -25,6 +25,8 @@ import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.ClickCocktailListAdapter;
 
+import static nagaiko.track_alcohol.api.ApiResponseTypes.COCKTAIL_LIST;
+
 /**
  * Created by Konstantin on 24.10.2017.
  */
@@ -39,7 +41,7 @@ public class CocktailListFragment extends Fragment implements
     private static final String VISIBLE_POSITION = "position";
     private static final String ID_COCKTAIL = "idCocktail";
 
-    List<Cocktail> data;
+    private List<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
     private FragmentTransaction fragmentTransaction;
     private ClickCocktailListAdapter recyclerAdapter;
@@ -114,13 +116,15 @@ public class CocktailListFragment extends Fragment implements
     @Override
     public void onDataLoaded(int dataType, final Response response) {
 //        fragmentTransaction = getFragmentManager().beginTransaction();
-        final List<Cocktail> data = (List<Cocktail>)response.content;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                recyclerAdapter.setNewData(data);
-            }
-        });
+        if (dataType == COCKTAIL_LIST) {
+            data = (List<Cocktail>) response.content;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerAdapter.setNewData(data);
+                }
+            });
+        }
 //        fragmentTransaction.detach(this).attach(this).commit();
     }
 
