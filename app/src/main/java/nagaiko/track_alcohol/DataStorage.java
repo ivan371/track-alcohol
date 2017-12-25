@@ -14,16 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 import nagaiko.track_alcohol.api.ApiDataDownloader;
-import nagaiko.track_alcohol.api.GetCocktailThumbAsyncTask;
 import nagaiko.track_alcohol.api.ICallbackOnTask;
 import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.api.commands.ApiTask;
 import nagaiko.track_alcohol.api.commands.BaseHandlerTask;
-import nagaiko.track_alcohol.api.commands.CategoriesApiTask;
 import nagaiko.track_alcohol.api.commands.CategoriesDBTask;
-import nagaiko.track_alcohol.api.commands.CocktailByIdApiTask;
 import nagaiko.track_alcohol.api.commands.CocktailByIdDBTask;
-import nagaiko.track_alcohol.api.commands.CocktailInCategoryApiTask;
 import nagaiko.track_alcohol.api.commands.CocktailInCategoryDBTask;
 import nagaiko.track_alcohol.api.commands.DBTask;
 import nagaiko.track_alcohol.models.Cocktail;
@@ -52,12 +48,6 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         return _instance;
     }
 
-//    public interface Subscriber {
-//        void onDataUpdated(int dataType);
-//
-//        void onDataUpdateFail();
-//    }
-
     public interface Subscriber {
         void onDataLoaded(int type, Response response);
 
@@ -73,7 +63,6 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
     private int imageSize;
     private LruCache<Integer, Bitmap> _imageCache;
     private String apiKey;
-//    private ArrayList<Subscriber> subscribers;
 
     private Map<BaseHandlerTask, List<Subscriber>> commandSubscriberMap;
 
@@ -116,22 +105,6 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
             h = tmp;
         }
         return (int) (Math.min(h * 0.7f, w * 0.7f) + 0.5f);
-    }
-
-    private ApiTask getCategoriesAsyncTask() {
-        return new CategoriesApiTask();
-    }
-
-    private ApiTask getCocktailsInCategoryAsyncTask(String category) {
-        return new CocktailInCategoryApiTask(category);
-    }
-
-    private ApiTask getCocktailByIdAsyncTask(int cocktailId) {
-        return new CocktailByIdApiTask(cocktailId);
-    }
-
-    private GetCocktailThumbAsyncTask getCocktailThumbAsyncTask() {
-        return new GetCocktailThumbAsyncTask(cacheDir, imageSize, this);
     }
 
     private void addSubscriber(BaseHandlerTask task, Subscriber subscriber) {
@@ -213,7 +186,7 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
                 break;
 
             case COCKTAIL_LIST:
-                Cocktail[] cocktails = (Cocktail[]) response.content;
+                List<Cocktail> cocktails = (List<Cocktail>) response.content;
                 if (cocktails != null) {
                     for (Cocktail cocktail : cocktails) {
                         dbHelper.addOrUpdateCocktail(cocktail);

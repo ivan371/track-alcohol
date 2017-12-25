@@ -27,7 +27,11 @@ public class CocktailInCategoryDBTask extends DBTask {
 
     @Override
     public Response<List<Cocktail>> execute(DBHelper dbHelper) {
-        return new Response<List<Cocktail>>(getMessageType(), dbHelper.getCocktailsByCategory(category));
+        List<Cocktail> cocktailList = dbHelper.getCocktailsByCategory(category);
+        if (cocktailList.size() > 0) {
+            return new Response<List<Cocktail>>(getMessageType(), cocktailList);
+        }
+        return null;
     }
 
     @Override

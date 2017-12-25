@@ -150,11 +150,16 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
     public void onDataLoaded(int type, Response response) {
         if (type == CATEGORIES_LIST) {
             categories = (List<String>)response.content;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Menu menu = navigationView.getMenu();
+                    for(String cat: categories) {
+                        menu.add(cat).setIcon(R.drawable.coctail);
+                    }
+                }
+            });
 //            int size = categories.length;
-            Menu menu = navigationView.getMenu();
-            for(String cat: categories) {
-                menu.add(cat).setIcon(R.drawable.coctail);
-            }
         }
     }
 

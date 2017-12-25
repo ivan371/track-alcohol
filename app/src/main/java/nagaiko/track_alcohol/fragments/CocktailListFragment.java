@@ -112,11 +112,16 @@ public class CocktailListFragment extends Fragment implements
     }
 
     @Override
-    public void onDataLoaded(int dataType, Response response) {
-        fragmentTransaction = getFragmentManager().beginTransaction();
-
-        data = (List<Cocktail>)response.content;
-        fragmentTransaction.detach(this).attach(this).commit();
+    public void onDataLoaded(int dataType, final Response response) {
+//        fragmentTransaction = getFragmentManager().beginTransaction();
+        final List<Cocktail> data = (List<Cocktail>)response.content;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                recyclerAdapter.setNewData(data);
+            }
+        });
+//        fragmentTransaction.detach(this).attach(this).commit();
     }
 
     @Override

@@ -83,7 +83,7 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
         return super.getItemViewType(position);
     }
 
-    public void setNewData(ArrayList<Cocktail> cocktails) {
+    public void setNewData(List<Cocktail> cocktails) {
         data = cocktails;
         notifyDataSetChanged();
     }
