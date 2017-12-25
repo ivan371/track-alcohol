@@ -63,7 +63,7 @@ public class CategoryListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         recyclerView = new RecyclerView(getActivity());
 
-        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+//        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         recyclerView.setAdapter(new ClickCategoryListAdapter(getActivity().getLayoutInflater(), categories, this));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

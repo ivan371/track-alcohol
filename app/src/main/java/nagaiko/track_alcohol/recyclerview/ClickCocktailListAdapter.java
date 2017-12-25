@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nagaiko.track_alcohol.models.Cocktail;
 
@@ -19,7 +20,7 @@ public class ClickCocktailListAdapter extends ListCocktailListAdapter implements
 
     private final OnItemClickListener mClickListener;
 
-    public ClickCocktailListAdapter(LayoutInflater inflater, ArrayList<Cocktail> data, OnItemClickListener listener) {
+    public ClickCocktailListAdapter(LayoutInflater inflater, List<Cocktail> data, OnItemClickListener listener) {
         super(inflater, data);
         mClickListener = listener;
     }

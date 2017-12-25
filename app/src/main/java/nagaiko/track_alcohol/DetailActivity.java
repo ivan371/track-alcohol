@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 
@@ -74,40 +75,14 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             isEmpty = savedInstanceState.getBoolean(IS_COCKTAIL_EMPRY);
         }
 
-        dataStorage.subscribe(this);
-        cocktail = dataStorage.getCocktailById(idDrink);
-        thumbBm = dataStorage.getCocktailThumb(idDrink);
+//        dataStorage.subscribe(this);
+        dataStorage.getCocktailById(this, idDrink);
+//        thumbBm = dataStorage.getCocktailThumb(idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
             render();
         }
-//        setNotify();
-    }
-
-    public void setNotify() {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                0, notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Resources res = this.getResources();
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        builder.setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.coctail)
-                .setContentTitle("Го бухать!")
-                .setContentText("Ты давно не бухал")
-                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.coctail))
-                .setTicker("Твои друзья на НК, а ты нет")
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true);
-
-        Notification notification = builder.build();
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFY_ID, notification);
     }
 
 
@@ -173,13 +148,14 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     @Override
-    public void onDataUpdated(int dataType) {
+    public void onDataLoaded(int dataType, Response response) {
         Log.d(LOG_TAG, "onDataUpdated:" + dataType);
         if (dataType == COCKTAIL_INFO) {
-            setCocktail(dataStorage.getCocktailById(idDrink));
+            Cocktail cocktailInfo = (Cocktail) response.content;
+            setCocktail(cocktailInfo);
         } else if (dataType == COCKTAIL_THUMB) {
-            setThumb(dataStorage.getCocktailThumb(idDrink));
-            render();
+//            setThumb(dataStorage.getCocktailThumb(idDrink));
+//            render();
         }
     }
 
@@ -195,7 +171,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     @Override
-    public void onDataUpdateFail() {
+    public void onDataLoadFailed() {
         Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.action, snackbarOnClickListener).show();
     }
@@ -206,5 +182,4 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
             recreate();
         }
     };
-
 }
