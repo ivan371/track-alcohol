@@ -3,7 +3,6 @@ package nagaiko.track_alcohol;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 import android.util.DisplayMetrics;
@@ -53,13 +52,13 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         return _instance;
     }
 
+//    public interface Subscriber {
+//        void onDataUpdated(int dataType);
+//
+//        void onDataUpdateFail();
+//    }
+
     public interface Subscriber {
-        void onDataUpdated(int dataType);
-
-        void onDataUpdateFail();
-    }
-
-    public interface ApiDataSubscriber {
         void onDataLoaded(int type, Response response);
 
         void onDataLoadFailed();
@@ -74,9 +73,9 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
     private int imageSize;
     private LruCache<Integer, Bitmap> _imageCache;
     private String apiKey;
-    private ArrayList<Subscriber> subscribers;
+//    private ArrayList<Subscriber> subscribers;
 
-    private Map<BaseHandlerTask, List<ApiDataSubscriber>> commandSubscriberMap;
+    private Map<BaseHandlerTask, List<Subscriber>> commandSubscriberMap;
 
     private DataStorage(Context context) {
         dbHelper = new DBHelper(context);
@@ -93,15 +92,19 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         };
 
         apiKey = context.getString(R.string.api_key);
-        subscribers = new ArrayList<>();
+//        subscribers = new ArrayList<>();
 
         commandSubscriberMap = new HashMap<>();
     }
 
     private void initDownloaders() {
         apiDataDownloader = new ApiDataDownloader("APIDataDownloader", apiKey, this);
-        dbHandlerThread = new DBHandlerThread("DB Helper Thread", dbHelper, this);
+        apiDataDownloader.start();
+        apiDataDownloader.prepareHandler();
 
+        dbHandlerThread = new DBHandlerThread("DB Helper Thread", dbHelper, this);
+        dbHandlerThread.start();
+        dbHandlerThread.prepareHandler();
     }
 
     private static int updateImageSize(DisplayMetrics dm) {
@@ -131,31 +134,31 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
         return new GetCocktailThumbAsyncTask(cacheDir, imageSize, this);
     }
 
-    private void addSubscriber(BaseHandlerTask task, ApiDataSubscriber subscriber) {
+    private void addSubscriber(BaseHandlerTask task, Subscriber subscriber) {
         if (!commandSubscriberMap.containsKey(task)) {
-            commandSubscriberMap.put(task, new ArrayList<ApiDataSubscriber>());
+            commandSubscriberMap.put(task, new ArrayList<Subscriber>());
         }
         commandSubscriberMap.get(task).add(subscriber);
     }
 
     private void moveSubscribers(BaseHandlerTask from, BaseHandlerTask to) {
-        List<ApiDataSubscriber> subscribers = commandSubscriberMap.get(from);
+        List<Subscriber> subscribers = commandSubscriberMap.get(from);
         commandSubscriberMap.put(to, subscribers);
     }
 
-    public void getCategories(ApiDataSubscriber subscriber) {
+    public void getCategories(Subscriber subscriber) {
         final DBTask dbTask = new CategoriesDBTask();
         addSubscriber(dbTask, subscriber);
         dbHandlerThread.addTask(dbTask);
     }
 
-    public void getCocktailsByCategory(ApiDataSubscriber subscriber, String category) {
+    public void getCocktailsByCategory(Subscriber subscriber, String category) {
         DBTask dbTask = new CocktailInCategoryDBTask(category);
         addSubscriber(dbTask, subscriber);
         dbHandlerThread.addTask(dbTask);
     }
 
-    public void getCocktailById(ApiDataSubscriber subscriber, int id) {
+    public void getCocktailById(Subscriber subscriber, int id) {
         DBTask dbTask = new CocktailByIdDBTask(id);
         addSubscriber(dbTask, subscriber);
         dbHandlerThread.addTask(dbTask);
@@ -179,15 +182,15 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
 //    }
 
     public void unsubscribe(Subscriber subscriber) {
-        for (Map.Entry<BaseHandlerTask, List<ApiDataSubscriber>> entry : commandSubscriberMap.entrySet()) {
+        for (Map.Entry<BaseHandlerTask, List<Subscriber>> entry : commandSubscriberMap.entrySet()) {
             BaseHandlerTask task = entry.getKey();
-            List<ApiDataSubscriber> subsList = entry.getValue();
+            List<Subscriber> subsList = entry.getValue();
             subsList.remove(subscriber);
         }
     }
 
     private void notifySubscribers(BaseHandlerTask task, int type, Response response) {
-        for (ApiDataSubscriber subscriber : commandSubscriberMap.get(task)) {
+        for (Subscriber subscriber : commandSubscriberMap.get(task)) {
             subscriber.onDataLoaded(type, response);
         }
     }
@@ -242,7 +245,7 @@ public class DataStorage implements ICallbackOnTask, DBHandlerThread.ICallbackOn
 
     @Override
     public void onFailExecute(ApiTask task) {
-        for (ApiDataSubscriber subscriber : commandSubscriberMap.get(task)) {
+        for (Subscriber subscriber : commandSubscriberMap.get(task)) {
             subscriber.onDataLoadFailed();
         }
     }

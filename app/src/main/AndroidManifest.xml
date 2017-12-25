@@ -24,10 +24,6 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ListActivity" />
 
-        <service
-            android:name=".services.ApiDataDownloadService"
-            android:enabled="true"
-            android:exported="false" />
 
         <activity android:name=".DetailActivity"></activity>
     </application>

@@ -55,7 +55,7 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
 
-        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
+//        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         int size = categories.length;
         MenuItem mi;

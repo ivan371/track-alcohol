@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import nagaiko.track_alcohol.api.Response;
+
 /**
  * Created by Konstantin on 23.10.2017.
  */
@@ -31,10 +33,8 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
         }
-        dataStorage.subscribe(this);
-        if (dataStorage.getCategories().size() != 0) {
-            goToNextActivity();
-        }
+//        dataStorage.subscribe(this);
+        dataStorage.getCategories(this);
     }
 
     private void goToNextActivity() {
@@ -80,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements DataStorage.Subsc
     }
 
     @Override
-    public void onDataUpdated(int dataType) {
+    public void onDataLoaded(int type, Response response) {
         Log.d(LOG_TAG, "onDataUpdated");
         goToNextActivity();
     }
 
     @Override
-    public void onDataUpdateFail() {
+    public void onDataLoadFailed() {
         Snackbar.make(this.findViewById(R.id.imageView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.action, snackbarOnClickListener).show();
     }

@@ -29,9 +29,7 @@ public class DBHandlerThread extends HandlerThread {
         this.callbackOnTask = callbackOnTask;
     }
 
-    @Override
-    protected void onLooperPrepared() {
-        super.onLooperPrepared();
+    public void prepareHandler() {
         loadHandler = new Handler(getLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -55,4 +53,6 @@ public class DBHandlerThread extends HandlerThread {
     public void addTask(DBTask apiTask) {
         loadHandler.obtainMessage(apiTask.getMessageType(), apiTask).sendToTarget();
     }
+
+
 }

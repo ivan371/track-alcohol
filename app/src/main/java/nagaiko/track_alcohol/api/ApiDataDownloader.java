@@ -38,9 +38,7 @@ public class ApiDataDownloader extends HandlerThread {
         this.callbackOnTask = callbackOnTask;
     }
 
-    @Override
-    protected void onLooperPrepared() {
-        super.onLooperPrepared();
+    public void prepareHandler() {
         downloadHandler = new Handler(getLooper()) {
             @Override
             public void handleMessage(Message msg) {
