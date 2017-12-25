@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,10 +23,12 @@ public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRe
 
         private TextView measureTextView;
         private TextView ingredientTextView;
+        private ImageView ingredientImage;
         private IngredientViewHolder(View itemView) {
             super(itemView);
             measureTextView = itemView.findViewById(R.id.ingredient_measure);
             ingredientTextView = itemView.findViewById(R.id.ingredient_name);
+            ingredientImage = itemView.findViewById(R.id.ingredient_icon);
         }
     }
     private Context mContext;
@@ -52,6 +55,10 @@ public class IngredientRecyclerAdapter extends RecyclerView.Adapter<IngredientRe
         measureView.setText(ingredient.getMeasure());
         TextView button = holder.ingredientTextView;
         button.setText(ingredient.getName());
+        ImageView icon = holder.ingredientImage;
+        if (position == 0){
+            icon.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

@@ -129,9 +129,12 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
 
     private void render() {
         collaps.setTitle(cocktail.getName());
-        instructions.setText(cocktail.getInstruction());
+//        instructions.setText(cocktail.getInstruction());
         ArrayList<Cocktail.Ingredient> ingredients = cocktail.getIngredients();
+
         if (!ingredients.isEmpty()) {
+            Cocktail.Ingredient instruction = new Cocktail.Ingredient("Instruction", cocktail.getInstruction());
+            ingredients.add(0, instruction);
             RecyclerView ingredientsView = (RecyclerView) findViewById(R.id.ingredients);
             IngredientRecyclerAdapter adapter = new IngredientRecyclerAdapter(this, ingredients);
             ingredientsView.setAdapter(adapter);
