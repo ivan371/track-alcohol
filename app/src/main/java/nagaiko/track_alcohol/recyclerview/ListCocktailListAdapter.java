@@ -74,7 +74,7 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return data == null ? 0 : data.size();
     }
 
 
