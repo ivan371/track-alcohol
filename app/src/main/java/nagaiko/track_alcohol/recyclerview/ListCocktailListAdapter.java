@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import nagaiko.track_alcohol.DataStorage;
 import nagaiko.track_alcohol.R;
@@ -22,10 +23,10 @@ import nagaiko.track_alcohol.models.Cocktail;
 public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailListAdapter.ListViewHolder> {
 
     private final WeakReference<LayoutInflater> mInflater;
-    protected ArrayList<Cocktail> data;
+    protected List<Cocktail> data;
     private DataStorage dataStorage = DataStorage.getInstance();
 
-    public ListCocktailListAdapter(LayoutInflater inflater, ArrayList<Cocktail> data) {
+    public ListCocktailListAdapter(LayoutInflater inflater, List<Cocktail> data) {
         mInflater = new WeakReference<LayoutInflater>(inflater);
         this.data = data;
     }
@@ -68,12 +69,12 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
     public void onBindViewHolder(ListViewHolder holder, int position) {
         holder.setName(data.get(position).getName());
         int id = data.get(position).getId();
-        holder.setImg(dataStorage.getCocktailThumb(id));
+//        holder.setImg(dataStorage.getCocktailThumb(id));
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return data == null ? 0 : data.size();
     }
 
 
@@ -82,7 +83,7 @@ public class ListCocktailListAdapter extends RecyclerView.Adapter<ListCocktailLi
         return super.getItemViewType(position);
     }
 
-    public void setNewData(ArrayList<Cocktail> cocktails) {
+    public void setNewData(List<Cocktail> cocktails) {
         data = cocktails;
         notifyDataSetChanged();
     }

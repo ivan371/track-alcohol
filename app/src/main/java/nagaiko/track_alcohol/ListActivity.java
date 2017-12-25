@@ -20,10 +20,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.fragments.CategoryListFragment;
 import nagaiko.track_alcohol.fragments.CocktailListFragment;
 
-public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import static nagaiko.track_alcohol.api.ApiResponseTypes.CATEGORIES_LIST;
+
+public class ListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DataStorage.Subscriber {
 
     public final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -31,7 +38,8 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
     private CocktailListFragment cocktailListFragment;
 
     private DataStorage dataStorage;
-    private String[] categories;
+    private List<String> categories;
+    private NavigationView navigationView;
     Toolbar toolbar;
 
     @Override
@@ -49,20 +57,13 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         final FragmentManager fm = getSupportFragmentManager();
         dataStorage = DataStorage.getInstanceOrCreate(this);
-
-        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
-
-        int size = categories.length;
-        MenuItem mi;
-        Menu menu = navigationView.getMenu();
-        for(int i = 0; i < size; i++) {
-            menu.add(categories[i]).setIcon(R.drawable.coctail);
-        }
+        dataStorage.getCategories(this);
+//        categories = dataStorage.getCategories().toArray(new String[dataStorage.getCategories().size()]);
 
         if (savedInstanceState == null) {
             fragment = new CategoryListFragment();
@@ -145,4 +146,25 @@ public class ListActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onDataLoaded(int type, Response response) {
+        if (type == CATEGORIES_LIST) {
+            categories = (List<String>)response.content;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Menu menu = navigationView.getMenu();
+                    for(String cat: categories) {
+                        menu.add(cat).setIcon(R.drawable.coctail);
+                    }
+                }
+            });
+//            int size = categories.length;
+        }
+    }
+
+    @Override
+    public void onDataLoadFailed() {
+
+    }
 }

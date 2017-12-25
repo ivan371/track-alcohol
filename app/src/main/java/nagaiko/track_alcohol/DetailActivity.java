@@ -1,18 +1,27 @@
 package nagaiko.track_alcohol;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
+import android.graphics.BitmapFactory;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +29,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import nagaiko.track_alcohol.api.Response;
 import nagaiko.track_alcohol.models.Cocktail;
 import nagaiko.track_alcohol.recyclerview.IngredientRecyclerAdapter;
 
@@ -42,6 +52,7 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     private Cocktail cocktail;
     private Bitmap thumbBm;
     CollapsingToolbarLayout collaps;
+    private static final int NOTIFY_ID = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +67,50 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
         instructions = (TextView) findViewById(R.id.textView1);
         thumb = (ImageView) findViewById(R.id.toolbarImage);
         collaps = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         idDrink = getIntent().getIntExtra(ID_COCKTAIL, defaultValue);
         if (savedInstanceState != null) {
             isFinish = savedInstanceState.getBoolean(IS_FINISH_BUNDLE_KEY);
             isEmpty = savedInstanceState.getBoolean(IS_COCKTAIL_EMPRY);
         }
 
-        dataStorage.subscribe(this);
-        cocktail = dataStorage.getCocktailById(idDrink);
-        thumbBm = dataStorage.getCocktailThumb(idDrink);
+//        dataStorage.subscribe(this);
+        dataStorage.getCocktailById(this, idDrink);
+//        thumbBm = dataStorage.getCocktailThumb(idDrink);
         // TO_DO есть ли в БД что-нибудь, кроме названия коктеля
         if (cocktail != null) {
             isEmpty = true;
             render();
         }
+//        setNotify();
     }
+
+    public void setNotify() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                0, notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Resources res = this.getResources();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setContentIntent(contentIntent)
+                .setSmallIcon(R.drawable.coctail)
+                .setContentTitle("Го бухать!")
+                .setContentText("Ты давно не бухал")
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.coctail))
+                .setTicker("Твои друзья на НК, а ты нет")
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true);
+
+        Notification notification = builder.build();
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFY_ID, notification);
+    }
+
 
     private void setCocktail(Cocktail cocktail) {
         this.cocktail = cocktail;
@@ -140,18 +174,30 @@ public class DetailActivity extends AppCompatActivity implements DataStorage.Sub
     }
 
     @Override
-    public void onDataUpdated(int dataType) {
+    public void onDataLoaded(int dataType, Response response) {
         Log.d(LOG_TAG, "onDataUpdated:" + dataType);
         if (dataType == COCKTAIL_INFO) {
-            setCocktail(dataStorage.getCocktailById(idDrink));
+            Cocktail cocktailInfo = (Cocktail) response.content;
+            setCocktail(cocktailInfo);
         } else if (dataType == COCKTAIL_THUMB) {
-            setThumb(dataStorage.getCocktailThumb(idDrink));
-            render();
+//            setThumb(dataStorage.getCocktailThumb(idDrink));
+//            render();
         }
     }
 
     @Override
-    public void onDataUpdateFail() {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onDataLoadFailed() {
         Snackbar.make(this.findViewById(R.id.scrollView), R.string.no_internet, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.action, snackbarOnClickListener).show();
     }

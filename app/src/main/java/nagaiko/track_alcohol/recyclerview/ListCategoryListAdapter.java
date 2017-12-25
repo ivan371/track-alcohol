@@ -58,7 +58,7 @@ public class ListCategoryListAdapter extends RecyclerView.Adapter<ListCategoryLi
 
     @Override
     public int getItemCount() {
-        return data.length;
+        return data == null ? 0 : data.length;
     }
 
 
